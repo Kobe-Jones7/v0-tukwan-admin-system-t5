@@ -1,50 +1,44 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sparkles, Search, Loader2 } from "lucide-react"
-import { AISearchResults } from "./ai-search-results"
-import type { AISearchResult } from "@/lib/ai-search"
+import { AISearchResults } from "@/components/ai-search-results"
 
 interface AISearchModalProps {
   isOpen: boolean
   onClose: () => void
-  initialQuery?: string
 }
 
-export function AISearchModal({ isOpen, onClose, initialQuery = "" }: AISearchModalProps) {
-  const [query, setQuery] = useState(initialQuery)
+export function AISearchModal({ isOpen, onClose }: AISearchModalProps) {
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [result, setResult] = useState<AISearchResult | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
-  const handleSearch = async () => {
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
     if (!query.trim()) return
 
     setIsLoading(true)
-    setError(null)
-    setResult(null)
-
     try {
       const response = await fetch("/api/ai-search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: query.trim() }),
+        body: JSON.stringify({ query }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to generate AI search result")
+      if (response.ok) {
+        const data = await response.json()
+        setResults(data)
       }
-
-      const data = await response.json()
-      setResult(data)
-    } catch (err) {
-      setError("Failed to generate AI search result. Please try again.")
-      console.error("AI Search Error:", err)
+    } catch (error) {
+      console.error("Search failed:", error)
     } finally {
       setIsLoading(false)
     }
@@ -52,74 +46,50 @@ export function AISearchModal({ isOpen, onClose, initialQuery = "" }: AISearchMo
 
   const handleClose = () => {
     setQuery("")
-    setResult(null)
-    setError(null)
+    setResults(null)
     onClose()
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-blue-600" />
-            AI-Powered Tour Search
+            <Sparkles className="h-5 w-5 text-purple-500" />
+            AI-Powered Travel Search
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          {!result && (
-            <div className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Search for any location in Ghana..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                  className="flex-1"
-                />
-                <Button
-                  onClick={handleSearch}
-                  disabled={isLoading || !query.trim()}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                  {isLoading ? "Generating..." : "AI Search"}
-                </Button>
-              </div>
-
-              {isLoading && (
-                <div className="text-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-                  <p className="text-muted-foreground">AI is creating your custom tour package for '{query}'...</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Analyzing location factors and generating real-time pricing...
-                  </p>
-                </div>
-              )}
-
-              {error && (
-                <div className="text-center py-4">
-                  <p className="text-red-600">{error}</p>
-                  <Button variant="outline" onClick={handleSearch} className="mt-2 bg-transparent">
-                    Try Again
-                  </Button>
-                </div>
-              )}
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder="Ask me anything about Ghana travel... (e.g., 'Best beaches near Accra' or 'Cultural tours in Kumasi')"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
-          )}
+            <Button
+              type="submit"
+              disabled={isLoading || !query.trim()}
+              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            >
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            </Button>
+          </form>
 
-          {result && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <Button variant="outline" onClick={() => setResult(null)} size="sm">
-                  ← New Search
-                </Button>
-                <Button variant="outline" onClick={handleClose} size="sm">
-                  Close
-                </Button>
-              </div>
-              <AISearchResults result={result} />
+          {results && <AISearchResults results={results} />}
+
+          {!results && !isLoading && (
+            <div className="text-center py-8 text-gray-500">
+              <Sparkles className="h-12 w-12 mx-auto mb-4 text-purple-300" />
+              <p className="text-lg font-medium mb-2">Discover Ghana with AI</p>
+              <p className="text-sm">
+                Ask me about destinations, activities, cultural experiences, or anything about traveling in Ghana!
+              </p>
             </div>
           )}
         </div>

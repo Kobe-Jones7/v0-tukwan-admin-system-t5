@@ -1,81 +1,105 @@
-import Link from "next/link"
 import Image from "next/image"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, ArrowRight } from "lucide-react"
-import { attractions } from "@/data/ghana-attractions"
+import { MapPin, Star, ArrowRight } from "lucide-react"
 
 export function AttractionsShowcase() {
-  // Get 4 featured attractions (one from each main category)
-  const featuredAttractions = [
-    attractions.find((a) => a.category === "Historical"),
-    attractions.find((a) => a.category === "Nature"),
-    attractions.find((a) => a.category === "Cultural"),
-    attractions.find((a) => a.category === "Beach"),
+  const attractions = [
+    {
+      id: 1,
+      name: "Cape Coast Castle",
+      location: "Cape Coast, Central Region",
+      description: "UNESCO World Heritage Site with deep historical significance in the transatlantic slave trade.",
+      image: "/images/cape-coast-castle-oceanview.webp",
+      rating: 4.8,
+      reviews: 245,
+      category: "Historical",
+    },
+    {
+      id: 2,
+      name: "Mole National Park",
+      location: "Northern Region",
+      description: "Ghana's largest wildlife park, home to elephants, antelopes, and over 300 bird species.",
+      image: "/images/mole-national-park-elephant.jpg",
+      rating: 4.7,
+      reviews: 189,
+      category: "Wildlife",
+    },
+    {
+      id: 3,
+      name: "Kakum Canopy Walk",
+      location: "Central Region",
+      description: "Famous canopy walkway suspended 30 meters above the tropical rainforest floor.",
+      image: "/kakum-canopy-walk.png",
+      rating: 4.6,
+      reviews: 156,
+      category: "Adventure",
+    },
+    {
+      id: 4,
+      name: "Lake Volta",
+      location: "Eastern & Volta Regions",
+      description: "One of the world's largest man-made lakes, perfect for cruises and water activities.",
+      image: "/images/volta-lake.png",
+      rating: 4.5,
+      reviews: 134,
+      category: "Nature",
+    },
   ]
-    .filter(Boolean)
-    .map((attraction) => {
-      if (attraction && attraction.category === "Nature") {
-        return {
-          ...attraction,
-          images: ["/images/mole-national-park-elephant.jpg"],
-        }
-      }
-      return attraction
-    })
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16">
       <div className="container px-4 md:px-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold">Explore Ghana's Attractions</h2>
-            <p className="text-gray-500 mt-2">Discover historical sites, natural wonders, and cultural landmarks</p>
+            <h2 className="text-3xl font-bold mb-2">Top Attractions</h2>
+            <p className="text-gray-600">Discover Ghana's most iconic destinations and hidden gems</p>
           </div>
-          <Button variant="ghost" className="gap-2" asChild>
-            <Link href="/attractions">
-              View all attractions
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+          <Link href="/attractions">
+            <Button variant="ghost" className="gap-2">
+              View all attractions <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredAttractions.map((attraction) => (
-            <Link href={`/attractions/${attraction.id}`} key={attraction.id}>
-              <Card className="overflow-hidden h-full hover:shadow-lg transition-shadow">
-                <div className="relative h-48">
-                  <Image
-                    src={
-                      attraction.images[0] ||
-                      `/placeholder.svg?height=200&width=300&query=${encodeURIComponent(attraction.name) || "/placeholder.svg"}`
-                    }
-                    alt={attraction.name}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-blue-600">{attraction.category}</Badge>
-                  </div>
+          {attractions.map((attraction) => (
+            <Card key={attraction.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+              <div className="relative h-48">
+                <Image
+                  src={attraction.image || "/placeholder.svg"}
+                  alt={attraction.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <Badge className="absolute top-3 right-3 bg-blue-600">{attraction.category}</Badge>
+              </div>
+              <CardHeader className="p-4">
+                <CardTitle className="text-lg">{attraction.name}</CardTitle>
+                <div className="flex items-center text-sm text-gray-500">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {attraction.location}
                 </div>
-                <CardContent className="pt-4">
-                  <h3 className="text-lg font-semibold mb-2 line-clamp-1">{attraction.name}</h3>
-                  <div className="flex items-center text-gray-500 text-sm mb-2">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    <span>{attraction.region}</span>
-                  </div>
-                  <p className="text-gray-600 line-clamp-2 text-sm">{attraction.description}</p>
-                </CardContent>
-              </Card>
-            </Link>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{attraction.description}</p>
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span className="font-medium">{attraction.rating}</span>
+                  <span className="text-gray-500 text-sm">({attraction.reviews} reviews)</span>
+                </div>
+              </CardContent>
+              <CardFooter className="p-4 pt-0">
+                <Link href={`/attractions/${attraction.id}`} className="w-full">
+                  <Button variant="outline" className="w-full bg-transparent">
+                    Learn More
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
           ))}
-        </div>
-
-        <div className="mt-8 text-center">
-          <Button className="bg-blue-600 hover:bg-blue-700" asChild>
-            <Link href="/attractions">Explore All Attractions</Link>
-          </Button>
         </div>
       </div>
     </section>

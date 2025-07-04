@@ -12,13 +12,12 @@ import { Separator } from "@/components/ui/separator"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, CreditCard, Wallet, Shield, Truck, CheckCircle } from "lucide-react"
+import { ArrowLeft, CreditCard, Wallet, Shield, Truck, CheckCircle, Smartphone, DollarSign } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { Footer } from "@/components/footer"
 
 export default function CheckoutPage() {
-  const [paymentMethod, setPaymentMethod] = useState("credit-card")
-  const [useVooyaWallet, setUseVooyaWallet] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState("mobile-money")
 
   const cartItems = [
     {
@@ -59,9 +58,20 @@ export default function CheckoutPage() {
   const shipping = subtotal > 300 ? 0 : 25
   const tax = Math.round(subtotal * 0.125) // 12.5% VAT
 
-  // Apply 5% discount if using Vooya Wallet
-  const vooyaDiscount = paymentMethod === "vooya-wallet" ? Math.round(subtotal * 0.05) : 0
-  const total = subtotal + shipping + tax - vooyaDiscount
+  // Apply discounts based on payment method
+  const getDiscount = () => {
+    switch (paymentMethod) {
+      case "vooya-wallet":
+        return Math.round(subtotal * 0.05) // 5% discount
+      case "mobile-money":
+        return Math.round(subtotal * 0.02) // 2% discount
+      default:
+        return 0
+    }
+  }
+
+  const discount = getDiscount()
+  const total = subtotal + shipping + tax - discount
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -160,6 +170,31 @@ export default function CheckoutPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                    {/* Mobile Money Option */}
+                    <div className="flex items-center space-x-2 p-4 border rounded-lg bg-green-50 border-green-200">
+                      <RadioGroupItem value="mobile-money" id="mobile-money" />
+                      <Label htmlFor="mobile-money" className="flex-1 cursor-pointer">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <Smartphone className="h-5 w-5 text-green-600" />
+                            <div>
+                              <div className="font-medium flex items-center gap-2">
+                                Mobile Money
+                                <Badge className="bg-green-100 text-green-800 text-xs">2% OFF</Badge>
+                              </div>
+                              <div className="text-sm text-gray-600">MTN, Vodafone, AirtelTigo</div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-medium text-green-600">
+                              Save GH₵ {Math.round(subtotal * 0.02)}
+                            </div>
+                            <div className="text-xs text-gray-500">Instant discount</div>
+                          </div>
+                        </div>
+                      </Label>
+                    </div>
+
                     {/* Credit Card Option */}
                     <div className="flex items-center space-x-2 p-4 border rounded-lg">
                       <RadioGroupItem value="credit-card" id="credit-card" />
@@ -173,19 +208,26 @@ export default function CheckoutPage() {
                             </div>
                           </div>
                           <div className="flex gap-2">
-                            <Image
-                              src="/placeholder.svg?height=24&width=36&query=visa logo"
-                              alt="Visa"
-                              width={36}
-                              height={24}
-                            />
-                            <Image
-                              src="/placeholder.svg?height=24&width=36&query=mastercard logo"
-                              alt="Mastercard"
-                              width={36}
-                              height={24}
-                            />
+                            <Image src="/placeholder.svg?height=24&width=36" alt="Visa" width={36} height={24} />
+                            <Image src="/placeholder.svg?height=24&width=36" alt="Mastercard" width={36} height={24} />
                           </div>
+                        </div>
+                      </Label>
+                    </div>
+
+                    {/* PayPal Option */}
+                    <div className="flex items-center space-x-2 p-4 border rounded-lg">
+                      <RadioGroupItem value="paypal" id="paypal" />
+                      <Label htmlFor="paypal" className="flex-1 cursor-pointer">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <DollarSign className="h-5 w-5 text-blue-600" />
+                            <div>
+                              <div className="font-medium">PayPal</div>
+                              <div className="text-sm text-gray-600">Secure online payment</div>
+                            </div>
+                          </div>
+                          <div className="text-blue-600 font-bold">PayPal</div>
                         </div>
                       </Label>
                     </div>
@@ -216,7 +258,33 @@ export default function CheckoutPage() {
                     </div>
                   </RadioGroup>
 
-                  {/* Credit Card Form */}
+                  {/* Payment Method Forms */}
+                  {paymentMethod === "mobile-money" && (
+                    <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="space-y-2">
+                        <Label htmlFor="mobileNetwork">Select Network</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose your network" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="mtn">MTN Mobile Money</SelectItem>
+                            <SelectItem value="vodafone">Vodafone Cash</SelectItem>
+                            <SelectItem value="airteltigo">AirtelTigo Money</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="mobileNumber">Mobile Number</Label>
+                        <Input id="mobileNumber" placeholder="0XX XXX XXXX" />
+                      </div>
+                      <div className="text-sm text-green-600 bg-green-100 p-3 rounded">
+                        <CheckCircle className="h-4 w-4 inline mr-2" />
+                        Save 2% with Mobile Money payment!
+                      </div>
+                    </div>
+                  )}
+
                   {paymentMethod === "credit-card" && (
                     <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
                       <div className="space-y-2">
@@ -240,9 +308,24 @@ export default function CheckoutPage() {
                     </div>
                   )}
 
-                  {/* Vooya Wallet Form */}
+                  {paymentMethod === "paypal" && (
+                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center gap-3 text-blue-700">
+                        <DollarSign className="h-5 w-5" />
+                        <span className="font-medium">PayPal Payment</span>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="paypalEmail">PayPal Email</Label>
+                        <Input id="paypalEmail" type="email" placeholder="your@email.com" />
+                      </div>
+                      <div className="text-sm text-blue-600">
+                        You'll be redirected to PayPal to complete your payment securely.
+                      </div>
+                    </div>
+                  )}
+
                   {paymentMethod === "vooya-wallet" && (
-                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
+                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex items-center gap-3 text-blue-700">
                         <CheckCircle className="h-5 w-5" />
                         <span className="font-medium">Vooya Wallet Selected</span>
@@ -324,10 +407,13 @@ export default function CheckoutPage() {
                       <span>VAT (12.5%)</span>
                       <span>GH₵ {tax}</span>
                     </div>
-                    {vooyaDiscount > 0 && (
+                    {discount > 0 && (
                       <div className="flex justify-between text-sm text-green-600">
-                        <span>Vooya Wallet Discount (5%)</span>
-                        <span>-GH₵ {vooyaDiscount}</span>
+                        <span>
+                          {paymentMethod === "mobile-money" && "Mobile Money Discount (2%)"}
+                          {paymentMethod === "vooya-wallet" && "Vooya Wallet Discount (5%)"}
+                        </span>
+                        <span>-GH₵ {discount}</span>
                       </div>
                     )}
                     <Separator />
@@ -335,11 +421,7 @@ export default function CheckoutPage() {
                       <span>Total</span>
                       <span className="text-blue-600">GH₵ {total}</span>
                     </div>
-                    {vooyaDiscount > 0 && (
-                      <div className="text-xs text-green-600 text-right">
-                        You saved GH₵ {vooyaDiscount} with Vooya Wallet!
-                      </div>
-                    )}
+                    {discount > 0 && <div className="text-xs text-green-600 text-right">You saved GH₵ {discount}!</div>}
                   </div>
 
                   <Button className="w-full bg-blue-600 hover:bg-blue-700 h-12">
@@ -369,17 +451,23 @@ export default function CheckoutPage() {
                 </CardContent>
               </Card>
 
-              {/* Vooya Wallet Benefits */}
-              {paymentMethod === "vooya-wallet" && (
-                <Card className="border-blue-200 bg-blue-50">
+              {/* Payment Method Benefits */}
+              {(paymentMethod === "vooya-wallet" || paymentMethod === "mobile-money") && (
+                <Card
+                  className={`border-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-200 bg-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-50`}
+                >
                   <CardHeader>
-                    <CardTitle className="text-blue-800 text-sm">Vooya Wallet Benefits</CardTitle>
+                    <CardTitle className={`text-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-800 text-sm`}>
+                      {paymentMethod === "vooya-wallet" ? "Vooya Wallet Benefits" : "Mobile Money Benefits"}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2 text-sm text-blue-700">
+                    <div
+                      className={`space-y-2 text-sm text-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-700`}
+                    >
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
-                        <span>5% instant discount on all purchases</span>
+                        <span>{paymentMethod === "vooya-wallet" ? "5%" : "2%"} instant discount on all purchases</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
@@ -387,12 +475,14 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-3 w-3" />
-                        <span>Earn rewards on every transaction</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-3 w-3" />
                         <span>Enhanced purchase protection</span>
                       </div>
+                      {paymentMethod === "vooya-wallet" && (
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="h-3 w-3" />
+                          <span>Earn rewards on every transaction</span>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

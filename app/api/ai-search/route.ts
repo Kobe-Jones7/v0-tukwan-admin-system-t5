@@ -1,22 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { generateAISearchResult } from "@/lib/ai-search"
+import { generateAISearchResults } from "@/lib/ai-search"
 
 export async function POST(request: NextRequest) {
   try {
     const { query } = await request.json()
 
-    if (!query) {
-      return NextResponse.json({ error: "Search query is required" }, { status: 400 })
+    if (!query || typeof query !== "string") {
+      return NextResponse.json({ error: "Query is required and must be a string" }, { status: 400 })
     }
 
-    // Simulate AI processing time
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    const results = await generateAISearchResults(query)
 
-    const result = await generateAISearchResult(query)
-
-    return NextResponse.json(result)
+    return NextResponse.json(results)
   } catch (error) {
-    console.error("AI Search Error:", error)
-    return NextResponse.json({ error: "Failed to generate AI search result" }, { status: 500 })
+    console.error("AI Search API Error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

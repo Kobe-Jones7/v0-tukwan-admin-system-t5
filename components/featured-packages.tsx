@@ -9,6 +9,7 @@ export function FeaturedPackages() {
   const packages = [
     {
       id: 1,
+      slug: "cape-coast-heritage-tour",
       title: "Cape Coast Heritage Tour",
       location: "Cape Coast, Ghana",
       price: "GH₵ 1,500",
@@ -19,6 +20,7 @@ export function FeaturedPackages() {
     },
     {
       id: 2,
+      slug: "mole-national-park-safari",
       title: "Mole National Park Safari",
       location: "Northern Region, Ghana",
       price: "GH₵ 2,200",
@@ -29,6 +31,7 @@ export function FeaturedPackages() {
     },
     {
       id: 3,
+      slug: "volta-lake-cruise",
       title: "Volta Lake Cruise & Resort Stay",
       location: "Volta Region, Ghana",
       price: "GH₵ 1,800",
@@ -42,6 +45,7 @@ export function FeaturedPackages() {
   const stays = [
     {
       id: 1,
+      slug: "labadi-beach-hotel",
       title: "Labadi Beach Hotel",
       location: "Accra, Ghana",
       price: "GH₵ 950/night",
@@ -51,6 +55,7 @@ export function FeaturedPackages() {
     },
     {
       id: 2,
+      slug: "kempinski-hotel",
       title: "Kempinski Hotel",
       location: "Accra, Ghana",
       price: "GH₵ 1,200/night",
@@ -60,6 +65,7 @@ export function FeaturedPackages() {
     },
     {
       id: 3,
+      slug: "royal-senchi-resort",
       title: "Royal Senchi Resort",
       location: "Eastern Region, Ghana",
       price: "GH₵ 850/night",
@@ -77,9 +83,11 @@ export function FeaturedPackages() {
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-3xl font-bold">Featured Tour Packages</h2>
-              <Button variant="ghost" className="gap-2">
-                View all packages <ArrowRight className="h-4 w-4" />
-              </Button>
+              <Link href="/packages">
+                <Button variant="ghost" className="gap-2">
+                  View all packages <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {packages.map((pkg) => (
@@ -111,7 +119,7 @@ export function FeaturedPackages() {
                     </div>
                   </CardContent>
                   <CardFooter className="p-4 pt-0">
-                    <Link href="/cart">
+                    <Link href={`/packages/${pkg.slug}`} className="w-full">
                       <Button className="w-full bg-blue-600 hover:bg-blue-700">
                         <Eye className="mr-2 h-4 w-4" />
                         Explore
@@ -127,9 +135,11 @@ export function FeaturedPackages() {
           <div>
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-3xl font-bold">Popular Stays</h2>
-              <Button variant="ghost" className="gap-2">
-                View all stays <ArrowRight className="h-4 w-4" />
-              </Button>
+              <Link href="/packages">
+                <Button variant="ghost" className="gap-2">
+                  View all stays <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {stays.map((stay) => (
@@ -159,7 +169,9 @@ export function FeaturedPackages() {
                     </div>
                   </CardContent>
                   <CardFooter className="p-4 pt-0">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700">Book Now</Button>
+                    <Link href={`/packages/${stay.slug}`} className="w-full">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">Book Now</Button>
+                    </Link>
                   </CardFooter>
                 </Card>
               ))}
