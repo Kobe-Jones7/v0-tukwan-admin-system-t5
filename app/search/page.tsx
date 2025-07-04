@@ -7,10 +7,12 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Star, ShoppingBag } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { MapPin, Star, ShoppingBag, Search, Sparkles } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { AISearchResults } from "@/components/ai-search-results"
 
-// Mock data for search results
+// Mock data for search results (existing data)
 const mockStays = [
   {
     id: 1,
@@ -153,6 +155,8 @@ function SearchResults() {
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [results, setResults] = useState<any[]>([])
+  const [showAIResults, setShowAIResults] = useState(false)
+  const [newSearchQuery, setNewSearchQuery] = useState("")
 
   const searchType = searchParams.get("type") || "stays"
   const location = searchParams.get("location")
@@ -160,8 +164,10 @@ function SearchResults() {
   const experience = searchParams.get("experience")
   const query = searchParams.get("query")
 
+  const currentQuery = query || location || destination || experience || ""
+
   useEffect(() => {
-    // Simulate API call
+    // Simulate API call for existing data
     setTimeout(() => {
       switch (searchType) {
         case "stays":
@@ -182,6 +188,19 @@ function SearchResults() {
       setLoading(false)
     }, 1000)
   }, [searchType])
+
+  // Check if we should show AI results (no existing results found or specific query)
+  useEffect(() => {
+    if (!loading && results.length === 0 && currentQuery) {
+      setShowAIResults(true)
+    }
+  }, [loading, results, currentQuery])
+
+  const handleAISearch = () => {
+    if (newSearchQuery.trim()) {
+      setShowAIResults(true)
+    }
+  }
 
   const getSearchTitle = () => {
     switch (searchType) {
@@ -223,92 +242,132 @@ function SearchResults() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{getSearchTitle()}</h1>
         <p className="text-gray-600">{results.length} results found</p>
+
+        {/* AI Search Option */}
+        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="h-5 w-5 text-blue-600" />
+            <h3 className="font-semibold text-blue-800">Can't find what you're looking for?</h3>
+          </div>
+          <p className="text-sm text-gray-700 mb-3">
+            Let our AI create a custom tour package for any destination in Ghana!
+          </p>
+          <div className="flex gap-2">
+            <Input
+              placeholder="e.g., Aflao Border, Wa, Bolgatanga..."
+              value={newSearchQuery}
+              onChange={(e) => setNewSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleAISearch()}
+              className="flex-1"
+            />
+            <Button onClick={handleAISearch} className="bg-blue-600 hover:bg-blue-700">
+              <Search className="h-4 w-4 mr-2" />
+              AI Search
+            </Button>
+          </div>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {results.map((item) => (
-          <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="h-48 relative">
-              <Image
-                src={item.image || "/placeholder.svg"}
-                alt={item.title || item.name}
-                fill
-                className="object-cover"
-              />
-              {item.category && <Badge className="absolute top-3 right-3 bg-blue-600">{item.category}</Badge>}
-              {item.duration && <Badge className="absolute top-3 right-3 bg-blue-600">{item.duration}</Badge>}
-            </div>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-lg">{item.title || item.name}</h3>
-                <div className="text-right">
-                  <div className="font-bold">{item.price}</div>
-                  {searchType === "stays" && <div className="text-sm text-gray-500">per night</div>}
-                  {searchType === "packages" && <div className="text-sm text-gray-500">per person</div>}
-                </div>
+      {/* Show AI Results if triggered */}
+      {showAIResults && (newSearchQuery || currentQuery) && (
+        <div className="mb-8">
+          <AISearchResults
+            searchQuery={newSearchQuery || currentQuery}
+            onBookNow={(packageData) => {
+              // Handle booking logic here
+              console.log("Booking package:", packageData)
+            }}
+          />
+        </div>
+      )}
+
+      {/* Existing Results */}
+      {results.length > 0 && (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {results.map((item) => (
+            <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="h-48 relative">
+                <Image
+                  src={item.image || "/placeholder.svg"}
+                  alt={item.title || item.name}
+                  fill
+                  className="object-cover"
+                />
+                {item.category && <Badge className="absolute top-3 right-3 bg-blue-600">{item.category}</Badge>}
+                {item.duration && <Badge className="absolute top-3 right-3 bg-blue-600">{item.duration}</Badge>}
               </div>
-
-              <div className="flex items-center text-sm text-gray-500 mb-2">
-                <MapPin className="h-4 w-4 mr-1" />
-                {item.location}
-              </div>
-
-              {item.vendor && <div className="text-sm text-gray-500 mb-2">by {item.vendor}</div>}
-
-              <div className="flex items-center mb-3">
-                <div className="flex items-center">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="ml-1 text-sm font-medium">{item.rating}</span>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg">{item.title || item.name}</h3>
+                  <div className="text-right">
+                    <div className="font-bold">{item.price}</div>
+                    {searchType === "stays" && <div className="text-sm text-gray-500">per night</div>}
+                    {searchType === "packages" && <div className="text-sm text-gray-500">per person</div>}
+                  </div>
                 </div>
-                <span className="text-sm text-gray-500 ml-2">({item.reviews} reviews)</span>
-              </div>
 
-              {item.amenities && (
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {item.amenities.slice(0, 3).map((amenity: string) => (
-                    <Badge key={amenity} variant="secondary" className="text-xs">
-                      {amenity}
-                    </Badge>
-                  ))}
+                <div className="flex items-center text-sm text-gray-500 mb-2">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {item.location}
                 </div>
-              )}
 
-              {item.highlights && (
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {item.highlights.slice(0, 3).map((highlight: string) => (
-                    <Badge key={highlight} variant="secondary" className="text-xs">
-                      {highlight}
-                    </Badge>
-                  ))}
+                {item.vendor && <div className="text-sm text-gray-500 mb-2">by {item.vendor}</div>}
+
+                <div className="flex items-center mb-3">
+                  <div className="flex items-center">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="ml-1 text-sm font-medium">{item.rating}</span>
+                  </div>
+                  <span className="text-sm text-gray-500 ml-2">({item.reviews} reviews)</span>
                 </div>
-              )}
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
-                <Link
-                  href={
-                    searchType === "marketplace"
-                      ? `/marketplace/${item.title?.toLowerCase().replace(/\s+/g, "-")}`
-                      : searchType === "packages"
-                        ? `/packages/${item.title?.toLowerCase().replace(/\s+/g, "-")}`
-                        : searchType === "experiences"
-                          ? `/experiences/${item.title?.toLowerCase().replace(/\s+/g, "-")}`
-                          : `/stays/${item.name?.toLowerCase().replace(/\s+/g, "-")}`
-                  }
-                >
-                  {searchType === "marketplace" ? (
-                    <>
-                      <ShoppingBag className="mr-2 h-4 w-4" />
-                      View Details
-                    </>
-                  ) : (
-                    "View Details"
-                  )}
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                {item.amenities && (
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {item.amenities.slice(0, 3).map((amenity: string) => (
+                      <Badge key={amenity} variant="secondary" className="text-xs">
+                        {amenity}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {item.highlights && (
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {item.highlights.slice(0, 3).map((highlight: string) => (
+                      <Badge key={highlight} variant="secondary" className="text-xs">
+                        {highlight}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+                  <Link
+                    href={
+                      searchType === "marketplace"
+                        ? `/marketplace/${item.title?.toLowerCase().replace(/\s+/g, "-")}`
+                        : searchType === "packages"
+                          ? `/packages/${item.title?.toLowerCase().replace(/\s+/g, "-")}`
+                          : searchType === "experiences"
+                            ? `/experiences/${item.title?.toLowerCase().replace(/\s+/g, "-")}`
+                            : `/stays/${item.name?.toLowerCase().replace(/\s+/g, "-")}`
+                    }
+                  >
+                    {searchType === "marketplace" ? (
+                      <>
+                        <ShoppingBag className="mr-2 h-4 w-4" />
+                        View Details
+                      </>
+                    ) : (
+                      "View Details"
+                    )}
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

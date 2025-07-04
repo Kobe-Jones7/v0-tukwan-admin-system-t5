@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Calendar, CreditCard } from "lucide-react"
+import { Calendar, CreditCard, Smartphone, DollarSign } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -35,7 +35,7 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
   const [specialRequests, setSpecialRequests] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "vooya">("card")
+  const [paymentMethod, setPaymentMethod] = useState<"mobile-money" | "card" | "paypal" | "vooya">("mobile-money")
 
   const router = useRouter()
 
@@ -64,11 +64,26 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
       setDate(undefined)
       setGuests(1)
       setSpecialRequests("")
-      setPaymentMethod("card")
+      setPaymentMethod("mobile-money")
     }, 3000)
   }
 
   const totalPrice = tourPackage.price * guests
+
+  // Apply discounts based on payment method
+  const getDiscountedPrice = () => {
+    switch (paymentMethod) {
+      case "vooya":
+        return Math.round(totalPrice * 0.95) // 5% discount
+      case "mobile-money":
+        return Math.round(totalPrice * 0.98) // 2% discount
+      default:
+        return totalPrice
+    }
+  }
+
+  const discountedPrice = getDiscountedPrice()
+  const savings = totalPrice - discountedPrice
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -95,7 +110,9 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
             <p className="text-center text-gray-500 mb-4">
               Your booking for {tourPackage.title} has been confirmed. Check your email for details.
             </p>
-            <Button onClick={onClose}>Close</Button>
+            <Button onClick={onClose} className="bg-blue-600 hover:bg-blue-700">
+              Close
+            </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
@@ -105,7 +122,7 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
                 <Label htmlFor="date">Tour Date</Label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                    <Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
                       <Calendar className="mr-2 h-4 w-4" />
                       {date ? format(date, "PPP") : "Select a date"}
                     </Button>
@@ -151,6 +168,21 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
               <div className="space-y-2">
                 <Label htmlFor="paymentMethod">Payment Method</Label>
                 <div className="grid grid-cols-2 gap-2">
+                  {/* Mobile Money */}
+                  <div
+                    className={`border rounded-md p-3 cursor-pointer flex items-center gap-2 ${
+                      paymentMethod === "mobile-money" ? "border-blue-600 bg-blue-50" : ""
+                    }`}
+                    onClick={() => setPaymentMethod("mobile-money")}
+                  >
+                    <Smartphone className="h-5 w-5 text-green-600" />
+                    <div>
+                      <div className="font-medium text-sm">Mobile Money</div>
+                      <div className="text-xs text-green-600">2% discount</div>
+                    </div>
+                  </div>
+
+                  {/* Credit Card */}
                   <div
                     className={`border rounded-md p-3 cursor-pointer flex items-center gap-2 ${
                       paymentMethod === "card" ? "border-blue-600 bg-blue-50" : ""
@@ -158,8 +190,27 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
                     onClick={() => setPaymentMethod("card")}
                   >
                     <CreditCard className="h-5 w-5 text-gray-500" />
-                    <span>Credit Card</span>
+                    <div>
+                      <div className="font-medium text-sm">Credit Card</div>
+                      <div className="text-xs text-gray-500">Visa, Mastercard</div>
+                    </div>
                   </div>
+
+                  {/* PayPal */}
+                  <div
+                    className={`border rounded-md p-3 cursor-pointer flex items-center gap-2 ${
+                      paymentMethod === "paypal" ? "border-blue-600 bg-blue-50" : ""
+                    }`}
+                    onClick={() => setPaymentMethod("paypal")}
+                  >
+                    <DollarSign className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="font-medium text-sm">PayPal</div>
+                      <div className="text-xs text-gray-500">Secure payment</div>
+                    </div>
+                  </div>
+
+                  {/* Vooya Wallet */}
                   <div
                     className={`border rounded-md p-3 cursor-pointer flex items-center gap-2 ${
                       paymentMethod === "vooya" ? "border-blue-600 bg-blue-50" : ""
@@ -167,10 +218,97 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
                     onClick={() => setPaymentMethod("vooya")}
                   >
                     <Image src="/images/tukwan-logo.png" alt="Vooya" width={20} height={20} className="h-5 w-5" />
-                    <span>Vooya Wallet</span>
+                    <div>
+                      <div className="font-medium text-sm">Vooya Wallet</div>
+                      <div className="text-xs text-green-600">5% discount</div>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Payment Method Details */}
+              {paymentMethod === "mobile-money" && (
+                <div className="space-y-3 p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center gap-2 text-green-700">
+                    <Smartphone className="h-4 w-4" />
+                    <span className="font-medium">Mobile Money Payment</span>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="mobileNetwork">Select Network</Label>
+                    <select id="mobileNetwork" className="w-full p-2 border rounded-md" defaultValue="">
+                      <option value="" disabled>
+                        Choose your network
+                      </option>
+                      <option value="mtn">MTN Mobile Money</option>
+                      <option value="vodafone">Vodafone Cash</option>
+                      <option value="airteltigo">AirtelTigo Money</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="mobileNumber">Mobile Number</Label>
+                    <Input id="mobileNumber" placeholder="0XX XXX XXXX" />
+                  </div>
+                  <div className="text-sm text-green-600 bg-green-100 p-2 rounded">
+                    Save 2% with Mobile Money payment!
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === "card" && (
+                <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                  <div className="space-y-2">
+                    <Label htmlFor="cardNumber">Card Number</Label>
+                    <Input id="cardNumber" placeholder="1234 5678 9012 3456" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="expiry">Expiry Date</Label>
+                      <Input id="expiry" placeholder="MM/YY" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cvv">CVV</Label>
+                      <Input id="cvv" placeholder="123" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cardName">Name on Card</Label>
+                    <Input id="cardName" placeholder="Enter name as on card" />
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === "paypal" && (
+                <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 text-blue-700">
+                    <DollarSign className="h-4 w-4" />
+                    <span className="font-medium">PayPal Payment</span>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="paypalEmail">PayPal Email</Label>
+                    <Input id="paypalEmail" type="email" placeholder="your@email.com" />
+                  </div>
+                  <div className="text-sm text-blue-600">
+                    You'll be redirected to PayPal to complete your payment securely.
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === "vooya" && (
+                <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 text-blue-700">
+                    <Image src="/images/tukwan-logo.png" alt="Vooya" width={16} height={16} />
+                    <span className="font-medium">Vooya Wallet Payment</span>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="walletPin">Wallet PIN</Label>
+                    <Input id="walletPin" type="password" placeholder="Enter your 4-digit PIN" maxLength={4} />
+                  </div>
+                  <div className="text-sm text-blue-600">Current Balance: GH₵ 2,450.00</div>
+                  <div className="text-sm text-green-600 bg-green-100 p-2 rounded">
+                    Save 5% with Vooya Wallet payment!
+                  </div>
+                </div>
+              )}
 
               {/* Price Summary */}
               <div className="bg-gray-50 p-4 rounded-md mt-2">
@@ -182,23 +320,28 @@ export function BookingModal({ isOpen, onClose, tourPackage }: BookingModalProps
                   <span>Number of guests:</span>
                   <span>{guests}</span>
                 </div>
-                {paymentMethod === "vooya" && (
+                <div className="flex justify-between mb-2">
+                  <span>Subtotal:</span>
+                  <span>GH₵ {totalPrice.toLocaleString()}</span>
+                </div>
+                {savings > 0 && (
                   <div className="flex justify-between mb-2 text-green-600">
-                    <span>Vooya Wallet discount:</span>
-                    <span>-GH₵ {Math.round(totalPrice * 0.05).toLocaleString()}</span>
+                    <span>
+                      {paymentMethod === "mobile-money" && "Mobile Money discount (2%):"}
+                      {paymentMethod === "vooya" && "Vooya Wallet discount (5%):"}
+                    </span>
+                    <span>-GH₵ {savings.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
                   <span>Total:</span>
-                  <span>
-                    GH₵{" "}
-                    {paymentMethod === "vooya"
-                      ? Math.round(totalPrice * 0.95).toLocaleString()
-                      : totalPrice.toLocaleString()}
-                  </span>
+                  <span className="text-blue-600">GH₵ {discountedPrice.toLocaleString()}</span>
                 </div>
-                {paymentMethod === "vooya" && (
-                  <p className="text-sm text-green-600 mt-2">Save 5% by paying with Vooya Wallet!</p>
+                {savings > 0 && (
+                  <p className="text-sm text-green-600 mt-2">
+                    You save GH₵ {savings.toLocaleString()} with{" "}
+                    {paymentMethod === "mobile-money" ? "Mobile Money" : "Vooya Wallet"}!
+                  </p>
                 )}
               </div>
             </div>

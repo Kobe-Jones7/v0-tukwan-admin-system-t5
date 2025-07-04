@@ -1,328 +1,299 @@
-"use client"
-
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { Suspense } from "react"
+import { AttractionsShowcase } from "@/components/attractions-showcase"
+import { EnhancedSearchBar } from "@/components/enhanced-search-bar"
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Search, MapPin, Clock, Grid, List } from "lucide-react"
-import { getAllAttractions } from "@/data/attractions"
-import { SiteHeader } from "@/components/site-header"
-import { Footer } from "@/components/footer"
+import { MapPin, Star } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 
 export default function DiscoverGhanaPage() {
-  const attractions = getAllAttractions()
-
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedRegion, setSelectedRegion] = useState<string>("")
-  const [selectedTag, setSelectedTag] = useState<string>("")
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-
-  // Get unique regions and tags
-  const regions = Array.from(new Set(attractions.map((attraction) => attraction.region))).sort()
-  const allTags = Array.from(new Set(attractions.flatMap((attraction) => attraction.tags))).sort()
-
-  // Filter attractions based on search query, region, and tag
-  const filteredAttractions = attractions.filter((attraction) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      attraction.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      attraction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      attraction.region.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      attraction.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-
-    const matchesRegion = selectedRegion === "" || selectedRegion === "all" || attraction.region === selectedRegion
-
-    const matchesTag = selectedTag === "" || selectedTag === "all" || attraction.tags.includes(selectedTag)
-
-    return matchesSearch && matchesRegion && matchesTag
-  })
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <SiteHeader />
-
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative h-[400px] md:h-[500px]">
-        <Image
-          src="/placeholder.svg?height=500&width=1200&query=Ghana+tourist+attractions+diverse+landscape"
-          alt="Discover Ghana"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 flex items-center">
-          <div className="container px-4 md:px-6">
-            <div className="max-w-4xl text-white">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4">Discover Ghana</h1>
-              <p className="text-lg md:text-xl opacity-90 mb-8 max-w-2xl">
-                Explore Ghana's rich cultural heritage, stunning natural landscapes, and historical landmarks. From
-                ancient castles to pristine waterfalls, discover the beauty and diversity of the Gold Coast.
-              </p>
-
-              {/* Search Bar */}
-              <div className="relative max-w-xl">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search attractions, regions, or activities..."
-                  className="pl-10 h-12 bg-white/10 backdrop-blur-md border-white/20 text-white placeholder:text-white/60 rounded-full"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container px-4 md:px-6 py-8 flex-1">
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8 items-start md:items-center justify-between">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All Regions" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Regions</SelectItem>
-                {regions.map((region) => (
-                  <SelectItem key={region} value={region}>
-                    {region}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedTag} onValueChange={setSelectedTag}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {allTags.map((tag) => (
-                  <SelectItem key={tag} value={tag}>
-                    {tag}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">View:</span>
-            <Tabs defaultValue="grid" value={viewMode} onValueChange={(value) => setViewMode(value as "grid" | "list")}>
-              <TabsList>
-                <TabsTrigger value="grid">
-                  <Grid className="h-4 w-4 mr-1" />
-                  Grid
-                </TabsTrigger>
-                <TabsTrigger value="list">
-                  <List className="h-4 w-4 mr-1" />
-                  List
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/ghana-hiking-adventure-hero.jpeg"
+            alt="Discover Ghana - Adventure and Culture"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/40" />
         </div>
 
-        {/* Results Count */}
-        <div className="mb-6">
-          <p className="text-gray-500">
-            Showing {filteredAttractions.length} {filteredAttractions.length === 1 ? "attraction" : "attractions"}
-            {selectedRegion && selectedRegion !== "all" && ` in ${selectedRegion}`}
-            {selectedTag && selectedTag !== "all" && ` tagged as ${selectedTag}`}
-            {searchQuery && ` matching "${searchQuery}"`}
+        <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">Discover Ghana</h1>
+          <p className="text-xl md:text-2xl mb-8 text-gray-200">
+            Explore the Gateway to Africa - Rich Culture, Stunning Landscapes, Warm Hospitality
           </p>
+
+          {/* Enhanced Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <EnhancedSearchBar
+              placeholder="Search for any destination in Ghana..."
+              className="bg-white/95 backdrop-blur-sm"
+            />
+          </div>
         </div>
+      </section>
 
-        {/* Grid View */}
-        {viewMode === "grid" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredAttractions.map((attraction) => (
-              <Link href={`/discover-ghana/${attraction.id}`} key={attraction.id}>
-                <Card className="overflow-hidden h-full hover:shadow-lg transition-shadow group">
-                  <div className="relative h-48">
-                    <Image
-                      src={
-                        attraction.images[0] ||
-                        `/placeholder.svg?height=200&width=300&query=${encodeURIComponent(attraction.name) || "/placeholder.svg"}`
-                      }
-                      alt={attraction.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-2 right-2">
-                      <Badge className="bg-blue-600">{attraction.region}</Badge>
-                    </div>
-                  </div>
-                  <CardContent className="pt-4">
-                    <h3 className="text-lg font-semibold mb-2 line-clamp-1">{attraction.name}</h3>
-                    <div className="flex items-center text-gray-500 text-sm mb-2">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      <span>{attraction.region} Region</span>
-                    </div>
-                    <p className="text-gray-600 line-clamp-2 text-sm mb-3">{attraction.description}</p>
-                    <div className="flex flex-wrap gap-1">
-                      {attraction.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {attraction.tags.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{attraction.tags.length - 3}
-                        </Badge>
-                      )}
-                    </div>
-                  </CardContent>
-                  <CardFooter className="pt-0 flex justify-between text-sm text-gray-500">
-                    {attraction.practicalInfo?.openingHours && (
-                      <div className="flex items-center">
-                        <Clock className="h-3 w-3 mr-1" />
-                        <span className="line-clamp-1">
-                          {attraction.practicalInfo.openingHours.length > 15
-                            ? attraction.practicalInfo.openingHours.substring(0, 15) + "..."
-                            : attraction.practicalInfo.openingHours}
-                        </span>
-                      </div>
-                    )}
-                    <Button variant="link" size="sm" className="p-0 h-auto text-blue-600">
-                      Learn More
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* List View */}
-        {viewMode === "list" && (
-          <div className="space-y-4">
-            {filteredAttractions.map((attraction) => (
-              <Link href={`/discover-ghana/${attraction.id}`} key={attraction.id}>
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="relative h-48 md:h-auto md:w-64 lg:w-80">
-                      <Image
-                        src={
-                          attraction.images[0] ||
-                          `/placeholder.svg?height=200&width=300&query=${encodeURIComponent(attraction.name) || "/placeholder.svg"}`
-                        }
-                        alt={attraction.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 p-6">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <h3 className="text-xl font-semibold mb-2">{attraction.name}</h3>
-                          <div className="flex items-center text-gray-500 text-sm mb-3">
-                            <MapPin className="h-4 w-4 mr-1" />
-                            <span>{attraction.region} Region</span>
-                            <span className="mx-2">•</span>
-                            <Badge className="bg-blue-600">{attraction.tags[0]}</Badge>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          Learn More
-                        </Button>
-                      </div>
-                      <p className="text-gray-600 mb-4 line-clamp-3">{attraction.description}</p>
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                        {attraction.practicalInfo?.openingHours && (
-                          <div className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1" />
-                            <span>{attraction.practicalInfo.openingHours}</span>
-                          </div>
-                        )}
-                        {attraction.practicalInfo?.entryFee && (
-                          <div className="flex items-center">
-                            <span className="font-medium mr-1">Entry:</span>
-                            <span>{attraction.practicalInfo.entryFee}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-1 mt-3">
-                        {attraction.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* No Results */}
-        {filteredAttractions.length === 0 && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-              <Search className="h-8 w-8 text-gray-400" />
+      {/* Quick Stats */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">200+</div>
+              <div className="text-gray-600">Attractions</div>
             </div>
-            <h3 className="text-xl font-semibold mb-2">No attractions found</h3>
-            <p className="text-gray-500 mb-6">Try adjusting your search or filters to find what you're looking for.</p>
-            <Button
-              onClick={() => {
-                setSearchQuery("")
-                setSelectedRegion("")
-                setSelectedTag("")
-              }}
-            >
-              Clear all filters
-            </Button>
-          </div>
-        )}
-
-        {/* Featured Regions */}
-        <div className="mt-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Explore by Region</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {regions.slice(0, 8).map((region) => {
-              const regionAttractions = attractions.filter((a) => a.region === region)
-              const regionImage =
-                regionAttractions[0]?.images[0] || `/placeholder.svg?height=200&width=300&query=${region}+Ghana`
-
-              return (
-                <Card
-                  key={region}
-                  className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => setSelectedRegion(region)}
-                >
-                  <div className="relative h-32">
-                    <Image
-                      src={regionImage || "/placeholder.svg"}
-                      alt={`${region} Region`}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/40" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center text-white">
-                        <h3 className="font-semibold">{region}</h3>
-                        <p className="text-sm opacity-90">{regionAttractions.length} attractions</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              )
-            })}
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">16</div>
+              <div className="text-gray-600">Regions</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">50+</div>
+              <div className="text-gray-600">Languages</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">32M</div>
+              <div className="text-gray-600">People</div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <Footer />
+      {/* Featured Regions */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Explore by Region</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              From bustling cities to pristine beaches, ancient castles to wildlife reserves - Ghana offers diverse
+              experiences across all regions
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Greater Accra */}
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="relative h-48">
+                <Image
+                  src="/independence-arch-ghana.png"
+                  alt="Greater Accra - Independence Arch"
+                  fill
+                  className="object-cover"
+                />
+                <Badge className="absolute top-4 left-4 bg-blue-600">Capital Region</Badge>
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-2">Greater Accra</h3>
+                <p className="text-gray-600 mb-4">
+                  Vibrant capital with modern attractions, historical sites, and beautiful beaches
+                </p>
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>25+ Attractions</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4" />
+                    <span>4.5/5</span>
+                  </div>
+                </div>
+                <Link href="/attractions?region=Greater+Accra">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Explore Greater Accra</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Central Region */}
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="relative h-48">
+                <Image
+                  src="/cape-coast-castle-ghana.png"
+                  alt="Central Region - Cape Coast Castle"
+                  fill
+                  className="object-cover"
+                />
+                <Badge className="absolute top-4 left-4 bg-green-600">UNESCO Sites</Badge>
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-2">Central Region</h3>
+                <p className="text-gray-600 mb-4">
+                  Historic castles, pristine beaches, and the famous Kakum National Park
+                </p>
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>30+ Attractions</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4" />
+                    <span>4.7/5</span>
+                  </div>
+                </div>
+                <Link href="/attractions?region=Central">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Explore Central Region</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Ashanti Region */}
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="relative h-48">
+                <Image
+                  src="/kwame-nkrumah-memorial-park.png"
+                  alt="Ashanti Region - Cultural Heritage"
+                  fill
+                  className="object-cover"
+                />
+                <Badge className="absolute top-4 left-4 bg-yellow-600">Cultural Heart</Badge>
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-semibold mb-2">Ashanti Region</h3>
+                <p className="text-gray-600 mb-4">
+                  Royal heritage, traditional crafts, and the cultural center of Ghana
+                </p>
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>20+ Attractions</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4" />
+                    <span>4.6/5</span>
+                  </div>
+                </div>
+                <Link href="/attractions?region=Ashanti">
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Explore Ashanti Region</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12">
+            <Link href="/attractions">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                View All Regions & Attractions
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Categories */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">What Interests You?</h2>
+            <p className="text-xl text-gray-600">Choose your adventure - from historical sites to natural wonders</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            <Link href="/attractions?category=Historical" className="group">
+              <div className="text-center p-6 rounded-lg border hover:shadow-lg transition-shadow">
+                <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <span className="text-2xl">🏰</span>
+                </div>
+                <h3 className="font-semibold">Historical</h3>
+                <p className="text-sm text-gray-600 mt-1">Castles & Forts</p>
+              </div>
+            </Link>
+
+            <Link href="/attractions?category=Nature" className="group">
+              <div className="text-center p-6 rounded-lg border hover:shadow-lg transition-shadow">
+                <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                  <span className="text-2xl">🌿</span>
+                </div>
+                <h3 className="font-semibold">Nature</h3>
+                <p className="text-sm text-gray-600 mt-1">Parks & Wildlife</p>
+              </div>
+            </Link>
+
+            <Link href="/attractions?category=Cultural" className="group">
+              <div className="text-center p-6 rounded-lg border hover:shadow-lg transition-shadow">
+                <div className="w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full flex items-center justify-center group-hover:bg-yellow-200 transition-colors">
+                  <span className="text-2xl">🎭</span>
+                </div>
+                <h3 className="font-semibold">Cultural</h3>
+                <p className="text-sm text-gray-600 mt-1">Museums & Arts</p>
+              </div>
+            </Link>
+
+            <Link href="/attractions?category=Beach" className="group">
+              <div className="text-center p-6 rounded-lg border hover:shadow-lg transition-shadow">
+                <div className="w-16 h-16 mx-auto mb-4 bg-cyan-100 rounded-full flex items-center justify-center group-hover:bg-cyan-200 transition-colors">
+                  <span className="text-2xl">🏖️</span>
+                </div>
+                <h3 className="font-semibold">Beaches</h3>
+                <p className="text-sm text-gray-600 mt-1">Coast & Islands</p>
+              </div>
+            </Link>
+
+            <Link href="/attractions?category=Religious" className="group">
+              <div className="text-center p-6 rounded-lg border hover:shadow-lg transition-shadow">
+                <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                  <span className="text-2xl">⛪</span>
+                </div>
+                <h3 className="font-semibold">Religious</h3>
+                <p className="text-sm text-gray-600 mt-1">Sacred Sites</p>
+              </div>
+            </Link>
+
+            <Link href="/attractions?category=Market" className="group">
+              <div className="text-center p-6 rounded-lg border hover:shadow-lg transition-shadow">
+                <div className="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                  <span className="text-2xl">🛒</span>
+                </div>
+                <h3 className="font-semibold">Markets</h3>
+                <p className="text-sm text-gray-600 mt-1">Local Shopping</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Attractions Showcase */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Featured Attractions</h2>
+            <p className="text-xl text-gray-600">Discover Ghana's most popular destinations</p>
+          </div>
+
+          <Suspense fallback={<div className="text-center">Loading attractions...</div>}>
+            <AttractionsShowcase />
+          </Suspense>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-16 bg-blue-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-4">Ready to Explore Ghana?</h2>
+          <p className="text-xl mb-8 text-blue-100">
+            Start planning your unforgettable journey through the Gateway to Africa
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/packages">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+                Browse Tour Packages
+              </Button>
+            </Link>
+            <Link href="/attractions">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+              >
+                View All Attractions
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

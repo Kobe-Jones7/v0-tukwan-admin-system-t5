@@ -5,15 +5,15 @@ import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Search, MapPin, Clock, Grid, List } from "lucide-react"
+import { Search, MapPin, Clock, Grid, List, Sparkles } from "lucide-react"
 import { attractions, getAllCategories, getAllRegions } from "@/data/ghana-attractions"
 import { SiteHeader } from "@/components/site-header"
 import { Footer } from "@/components/footer"
+import { EnhancedSearchBar } from "@/components/enhanced-search-bar"
 
 export default function AttractionsPage() {
   const searchParams = useSearchParams()
@@ -45,6 +45,10 @@ export default function AttractionsPage() {
     return matchesSearch && matchesCategory && matchesRegion
   })
 
+  const handleRegularSearch = (query: string) => {
+    setSearchQuery(query)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <SiteHeader />
@@ -52,7 +56,7 @@ export default function AttractionsPage() {
       {/* Hero Section */}
       <div className="relative h-[300px] md:h-[400px]">
         <Image
-          src="/placeholder.svg?height=400&width=1200&query=Ghana+tourist+attractions+landscape"
+          src="/placeholder.svg?height=400&width=1200"
           alt="Ghana Attractions"
           fill
           className="object-cover"
@@ -67,16 +71,16 @@ export default function AttractionsPage() {
                 Explore historical sites, natural wonders, and cultural landmarks across Ghana
               </p>
 
-              {/* Search Bar */}
-              <div className="relative max-w-xl">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search attractions..."
-                  className="pl-10 h-12 bg-white/10 backdrop-blur-md border-white/20 text-white placeholder:text-white/60 rounded-full"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+              {/* Enhanced Search Bar */}
+              <div className="max-w-xl">
+                <EnhancedSearchBar
+                  placeholder="Search attractions or try AI for custom tours..."
+                  onRegularSearch={handleRegularSearch}
                 />
+                <div className="mt-2 text-sm opacity-75">
+                  <Sparkles className="inline h-4 w-4 mr-1" />
+                  Can't find what you're looking for? Try our AI search!
+                </div>
               </div>
             </div>
           </div>
@@ -256,15 +260,21 @@ export default function AttractionsPage() {
             </div>
             <h3 className="text-xl font-semibold mb-2">No attractions found</h3>
             <p className="text-gray-500 mb-6">Try adjusting your search or filters to find what you're looking for.</p>
-            <Button
-              onClick={() => {
-                setSearchQuery("")
-                setSelectedCategory("")
-                setSelectedRegion("")
-              }}
-            >
-              Clear all filters
-            </Button>
+            <div className="flex gap-3 justify-center">
+              <Button
+                onClick={() => {
+                  setSearchQuery("")
+                  setSelectedCategory("")
+                  setSelectedRegion("")
+                }}
+              >
+                Clear all filters
+              </Button>
+              <Button variant="outline" className="bg-blue-600 text-white hover:bg-blue-700">
+                <Sparkles className="h-4 w-4 mr-2" />
+                Try AI Search Instead
+              </Button>
+            </div>
           </div>
         )}
       </div>
