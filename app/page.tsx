@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Users, Calendar, Plane, Hotel, Car, Camera } from "lucide-react"
+import { EnhancedSearchBar } from "@/components/enhanced-search-bar"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -14,7 +15,7 @@ export default function HomePage() {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
 
-      {/* Hero Section */}
+      {/* Hero Section with AI Search */}
       <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
         <Image
           src="/images/ghana-hiking-adventure-hero.jpeg"
@@ -29,6 +30,12 @@ export default function HomePage() {
           <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
             Experience authentic African culture, breathtaking landscapes, and unforgettable adventures
           </p>
+
+          {/* AI-Powered Search Bar in Hero */}
+          <div className="mb-8">
+            <EnhancedSearchBar />
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/packages">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-3">

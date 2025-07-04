@@ -1,314 +1,412 @@
-interface TourPackage {
-  title: string
-  location: string
+interface DayActivity {
+  time: string
+  activity: string
   description: string
-  duration: string
-  price: number
-  rating: number
-  maxGroupSize: number
-  image: string
-  highlights: string[]
+  location?: string
 }
 
-interface Attraction {
-  name: string
-  location: string
-  description: string
-  image: string
+interface ItineraryDay {
+  day: number
+  title: string
+  activities: DayActivity[]
+}
+
+interface EstimatedCost {
+  accommodation: number
+  meals: number
+  transport: number
+  total: number
 }
 
 export async function generateAISearchResults(query: string) {
   // Simulate AI processing delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 2000))
 
-  // Generate contextual response based on query
-  const response = generateContextualResponse(query)
-
-  // Generate tour packages based on query
-  const packages = generateTourPackages(query)
-
-  // Generate related attractions
-  const attractions = generateAttractions(query)
+  const location = extractLocation(query)
+  const itinerary = generateItinerary(location)
+  const overview = generateOverview(location)
+  const tips = generateTips(location)
+  const estimatedCost = generateEstimatedCost(location)
 
   return {
-    response,
-    packages,
-    attractions,
+    location,
+    overview,
+    itinerary,
+    tips,
+    estimatedCost,
   }
 }
 
-function generateContextualResponse(query: string): string {
+function extractLocation(query: string): string {
   const lowerQuery = query.toLowerCase()
 
-  if (lowerQuery.includes("beach") || lowerQuery.includes("coast")) {
-    return "Ghana's coastline offers stunning beaches perfect for relaxation and water activities. The Central and Western regions have the most beautiful beaches, with Cape Coast and Elmina offering historical significance alongside coastal beauty. I've found some great beach and coastal tour packages for you!"
-  }
+  if (lowerQuery.includes("aflao")) return "Aflao"
+  if (lowerQuery.includes("kumasi")) return "Kumasi"
+  if (lowerQuery.includes("cape coast")) return "Cape Coast"
+  if (lowerQuery.includes("tamale")) return "Tamale"
+  if (lowerQuery.includes("wa")) return "Wa"
+  if (lowerQuery.includes("bolgatanga")) return "Bolgatanga"
+  if (lowerQuery.includes("accra")) return "Accra"
+  if (lowerQuery.includes("elmina")) return "Elmina"
+  if (lowerQuery.includes("ho")) return "Ho"
+  if (lowerQuery.includes("sunyani")) return "Sunyani"
 
-  if (
-    lowerQuery.includes("culture") ||
-    lowerQuery.includes("traditional") ||
-    lowerQuery.includes("ashanti") ||
-    lowerQuery.includes("kumasi")
-  ) {
-    return "Ghana is rich in cultural heritage, especially in the Ashanti region around Kumasi. You can experience traditional Kente weaving, visit royal palaces, and participate in authentic cultural ceremonies. The packages below offer immersive cultural experiences with local communities."
-  }
-
-  if (
-    lowerQuery.includes("wildlife") ||
-    lowerQuery.includes("safari") ||
-    lowerQuery.includes("mole") ||
-    lowerQuery.includes("elephant")
-  ) {
-    return "Mole National Park is Ghana's premier wildlife destination, home to elephants, antelopes, and over 300 bird species. The best time for wildlife viewing is during the dry season (November-April) when animals gather around water sources."
-  }
-
-  if (lowerQuery.includes("accra") || lowerQuery.includes("city")) {
-    return "Accra, Ghana's vibrant capital, offers a perfect blend of modern city life and rich history. From Independence Square to bustling markets like Makola, there's plenty to explore. The city also serves as a great base for day trips to nearby attractions."
-  }
-
-  if (lowerQuery.includes("history") || lowerQuery.includes("castle") || lowerQuery.includes("slave")) {
-    return "Ghana's historical sites, particularly the slave castles at Cape Coast and Elmina, offer profound insights into the transatlantic slave trade. These UNESCO World Heritage sites provide educational and emotional experiences that are essential for understanding Ghana's history."
-  }
-
-  // Default response for location-specific queries
-  if (lowerQuery.includes("aflao") || lowerQuery.includes("border")) {
-    return "Aflao is Ghana's main border town with Togo, offering unique cross-border cultural experiences. While primarily a transit point, the area provides opportunities to experience Ewe culture and explore the Volta Region's attractions like Wli Waterfalls and Lake Volta."
-  }
-
-  return `Based on your search for "${query}", I've curated some excellent tour packages and attractions that match your interests. Ghana offers incredible diversity in experiences, from cultural immersion to natural wonders. These recommendations will help you discover the authentic beauty of Ghana!`
+  // Default to the query itself if no specific location found
+  return query.charAt(0).toUpperCase() + query.slice(1)
 }
 
-function generateTourPackages(query: string): TourPackage[] {
-  const lowerQuery = query.toLowerCase()
+function generateOverview(location: string): string {
+  const overviews: { [key: string]: string } = {
+    Aflao:
+      "Aflao, Ghana's main border town with Togo, offers a unique cross-border cultural experience. This 3-day itinerary combines border town exploration with nearby Volta Region attractions, including waterfalls and traditional Ewe culture.",
+    Kumasi:
+      "Kumasi, the cultural heart of Ghana and capital of the Ashanti Region, is perfect for experiencing traditional Ghanaian culture. This itinerary focuses on royal palaces, traditional crafts, and authentic cultural experiences.",
+    "Cape Coast":
+      "Cape Coast offers a profound journey through Ghana's history with its UNESCO World Heritage slave castles and beautiful coastal scenery. This itinerary balances historical education with coastal relaxation.",
+    Tamale:
+      "Tamale, the capital of Northern Ghana, provides an authentic experience of traditional Ghanaian life with unique architecture, vibrant markets, and cultural diversity.",
+    Wa: "Wa offers an immersive experience into traditional Northern Ghanaian culture with its distinctive Sudano-Sahelian architecture and rich cultural heritage.",
+    Bolgatanga:
+      "Bolgatanga is famous for its traditional crafts, especially basket weaving, and serves as a gateway to experiencing authentic Upper East Region culture.",
+    Accra:
+      "Ghana's vibrant capital city combines modern urban life with rich historical sites, bustling markets, and beautiful beaches along the Atlantic coast.",
+  }
 
-  // Base packages that can be customized
-  const basePackages: TourPackage[] = [
-    {
-      title: "Cape Coast Heritage Experience",
-      location: "Central Region, Ghana",
-      description:
-        "Explore Ghana's rich history at Cape Coast Castle and surrounding historical sites with expert guides.",
-      duration: "3 days, 2 nights",
-      price: 850,
-      rating: 4.8,
-      maxGroupSize: 15,
-      image: "/images/cape-coast-castle-oceanview.webp",
-      highlights: ["UNESCO World Heritage Sites", "Historical guided tours", "Cultural performances", "Local cuisine"],
-    },
-    {
-      title: "Mole National Park Safari",
-      location: "Northern Region, Ghana",
-      description:
-        "Experience Ghana's premier wildlife destination with elephants, antelopes, and diverse bird species.",
-      duration: "4 days, 3 nights",
-      price: 1200,
-      rating: 4.7,
-      maxGroupSize: 12,
-      image: "/images/mole-national-park-elephant.jpg",
-      highlights: ["Elephant encounters", "Game drives", "Bird watching", "Walking safaris"],
-    },
-    {
-      title: "Kumasi Cultural Immersion",
-      location: "Ashanti Region, Ghana",
-      description:
-        "Immerse yourself in Ashanti culture with traditional crafts, palace visits, and authentic experiences.",
-      duration: "3 days, 2 nights",
-      price: 750,
-      rating: 4.9,
-      maxGroupSize: 14,
-      image: "/images/kente-cloth.png",
-      highlights: ["Kente weaving workshop", "Manhyia Palace", "Traditional ceremonies", "Local markets"],
-    },
-  ]
+  return (
+    overviews[location] ||
+    `Explore ${location} with this carefully crafted itinerary that showcases the best of local culture, attractions, and authentic Ghanaian experiences.`
+  )
+}
 
-  // Customize packages based on query
-  if (lowerQuery.includes("aflao") || lowerQuery.includes("border") || lowerQuery.includes("volta")) {
-    return [
+function generateItinerary(location: string): ItineraryDay[] {
+  const itineraries: { [key: string]: ItineraryDay[] } = {
+    Aflao: [
       {
-        title: "Aflao Border & Volta Region Explorer",
-        location: "Volta Region, Ghana",
-        description:
-          "Discover the unique border culture of Aflao and explore the stunning Volta Region with its waterfalls and lake.",
-        duration: "4 days, 3 nights",
-        price: 680,
-        rating: 4.5,
-        maxGroupSize: 16,
-        image: "/images/adome-bridge-volta-lake.jpeg",
-        highlights: [
-          "Cross-border cultural experience",
-          "Wli Waterfalls hike",
-          "Lake Volta cruise",
-          "Ewe traditional culture",
+        day: 1,
+        title: "Border Town Exploration",
+        activities: [
+          {
+            time: "8:00 AM",
+            activity: "Arrival and Border Market Visit",
+            description: "Explore the bustling Aflao border market and experience cross-border trade culture",
+            location: "Aflao Border Market",
+          },
+          {
+            time: "10:30 AM",
+            activity: "Ewe Cultural Center",
+            description: "Learn about traditional Ewe culture, customs, and history",
+            location: "Local Cultural Center",
+          },
+          {
+            time: "2:00 PM",
+            activity: "Traditional Kente Weaving Workshop",
+            description: "Participate in authentic kente cloth weaving with local artisans",
+            location: "Artisan Workshop",
+          },
+          {
+            time: "6:00 PM",
+            activity: "Local Cuisine Experience",
+            description: "Enjoy traditional Ewe dishes and border town specialties",
+            location: "Local Restaurant",
+          },
         ],
       },
       {
-        title: "Volta Lake & Waterfalls Adventure",
-        location: "Eastern & Volta Regions",
-        description:
-          "Experience the beauty of Lake Volta and Ghana's highest waterfall in this nature-focused adventure.",
-        duration: "5 days, 4 nights",
-        price: 920,
-        rating: 4.6,
-        maxGroupSize: 12,
-        image: "/images/volta-lake.png",
-        highlights: [
-          "Wli Waterfalls trek",
-          "Lake Volta boat cruise",
-          "Traditional fishing villages",
-          "Mountain hiking",
+        day: 2,
+        title: "Volta Region Adventure",
+        activities: [
+          {
+            time: "7:00 AM",
+            activity: "Journey to Wli Waterfalls",
+            description: "Travel to Ghana's highest waterfall for hiking and nature photography",
+            location: "Wli Waterfalls",
+          },
+          {
+            time: "10:00 AM",
+            activity: "Waterfall Hike",
+            description: "Guided hike to the upper falls with local guide",
+            location: "Wli Waterfalls Trail",
+          },
+          {
+            time: "2:00 PM",
+            activity: "Traditional Village Visit",
+            description: "Visit local Ewe village and interact with community members",
+            location: "Nearby Village",
+          },
+          {
+            time: "5:00 PM",
+            activity: "Lake Volta Sunset",
+            description: "Relax by Lake Volta and enjoy the sunset",
+            location: "Lake Volta Shore",
+          },
         ],
       },
       {
-        title: "Eastern Region Cultural Trail",
-        location: "Eastern Region, Ghana",
-        description:
-          "Explore the cultural diversity of the Eastern Region including traditional festivals and craft centers.",
-        duration: "3 days, 2 nights",
-        price: 580,
-        rating: 4.4,
-        maxGroupSize: 18,
-        image: "/placeholder.svg?height=300&width=400",
-        highlights: ["Traditional festivals", "Craft workshops", "Mountain communities", "Local cuisine"],
+        day: 3,
+        title: "Cultural Immersion",
+        activities: [
+          {
+            time: "8:00 AM",
+            activity: "Traditional Drumming & Dancing",
+            description: "Learn traditional Ewe drumming and dance with local performers",
+            location: "Cultural Center",
+          },
+          {
+            time: "11:00 AM",
+            activity: "Local Craft Shopping",
+            description: "Shop for authentic local crafts and souvenirs",
+            location: "Craft Market",
+          },
+          {
+            time: "2:00 PM",
+            activity: "Cross-Border Experience",
+            description: "Optional visit to Lomé, Togo (passport required)",
+            location: "Aflao-Lomé Border",
+          },
+          {
+            time: "5:00 PM",
+            activity: "Farewell Dinner",
+            description: "Traditional farewell meal with local family",
+            location: "Local Home",
+          },
+        ],
       },
-    ]
-  }
-
-  if (lowerQuery.includes("beach") || lowerQuery.includes("coast")) {
-    return [
+    ],
+    Kumasi: [
       {
-        title: "Ghana Coastal Paradise",
-        location: "Central & Western Regions",
-        description: "Relax on pristine beaches while exploring historical coastal towns and fishing communities.",
-        duration: "5 days, 4 nights",
-        price: 890,
-        rating: 4.6,
-        maxGroupSize: 16,
-        image: "/ghana-beach-sunset.png",
-        highlights: ["Beautiful beaches", "Fishing village visits", "Water sports", "Coastal cuisine"],
-      },
-      ...basePackages.slice(0, 2),
-    ]
-  }
-
-  if (lowerQuery.includes("culture") || lowerQuery.includes("traditional")) {
-    return [
-      basePackages[2], // Kumasi Cultural
-      basePackages[0], // Cape Coast Heritage
-      {
-        title: "Northern Ghana Cultural Safari",
-        location: "Northern Region, Ghana",
-        description: "Experience the unique cultures of Northern Ghana with traditional architecture and customs.",
-        duration: "6 days, 5 nights",
-        price: 1100,
-        rating: 4.5,
-        maxGroupSize: 14,
-        image: "/placeholder.svg?height=300&width=400",
-        highlights: ["Traditional architecture", "Cultural ceremonies", "Local crafts", "Community visits"],
-      },
-    ]
-  }
-
-  if (lowerQuery.includes("wildlife") || lowerQuery.includes("safari")) {
-    return [
-      basePackages[1], // Mole Safari
-      {
-        title: "Kakum Canopy Walk & Wildlife",
-        location: "Central Region, Ghana",
-        description: "Experience the famous canopy walk and diverse wildlife in Ghana's tropical rainforest.",
-        duration: "2 days, 1 night",
-        price: 450,
-        rating: 4.4,
-        maxGroupSize: 20,
-        image: "/kakum-canopy-walk.png",
-        highlights: ["Canopy walk experience", "Rainforest wildlife", "Bird watching", "Nature photography"],
+        day: 1,
+        title: "Royal Ashanti Heritage",
+        activities: [
+          {
+            time: "9:00 AM",
+            activity: "Manhyia Palace Museum",
+            description: "Explore the official residence of the Asantehene and learn about Ashanti royal history",
+            location: "Manhyia Palace",
+          },
+          {
+            time: "11:30 AM",
+            activity: "Kejetia Market Tour",
+            description: "Navigate West Africa's largest market with a local guide",
+            location: "Kejetia Market",
+          },
+          {
+            time: "2:00 PM",
+            activity: "Traditional Kente Weaving",
+            description: "Visit authentic kente weaving village and try weaving yourself",
+            location: "Bonwire Village",
+          },
+          {
+            time: "5:00 PM",
+            activity: "Ashanti Cultural Performance",
+            description: "Enjoy traditional drumming, dancing, and storytelling",
+            location: "Cultural Center",
+          },
+        ],
       },
       {
-        title: "Shai Hills Wildlife Adventure",
-        location: "Greater Accra Region",
-        description: "Explore the unique landscape and wildlife of Shai Hills, including baboons and antelopes.",
-        duration: "1 day",
-        price: 180,
-        rating: 4.2,
-        maxGroupSize: 25,
-        image: "/shai-hills-caves-ghana.png",
-        highlights: ["Wildlife spotting", "Cave exploration", "Rock climbing", "Cultural sites"],
+        day: 2,
+        title: "Crafts and Traditions",
+        activities: [
+          {
+            time: "8:00 AM",
+            activity: "Adinkra Cloth Making",
+            description: "Learn the ancient art of Adinkra symbol printing on cloth",
+            location: "Ntonso Village",
+          },
+          {
+            time: "11:00 AM",
+            activity: "Wood Carving Workshop",
+            description: "Try traditional Ashanti wood carving with master craftsmen",
+            location: "Ahwiaa Village",
+          },
+          {
+            time: "2:30 PM",
+            activity: "Kumasi Fort Visit",
+            description: "Explore the historic British colonial fort and museum",
+            location: "Kumasi Fort",
+          },
+          {
+            time: "4:30 PM",
+            activity: "Local Food Tasting",
+            description: "Sample authentic Ashanti cuisine and local delicacies",
+            location: "Local Restaurant",
+          },
+        ],
       },
-    ]
+      {
+        day: 3,
+        title: "Nature and Spirituality",
+        activities: [
+          {
+            time: "7:30 AM",
+            activity: "Lake Bosomtwe Excursion",
+            description: "Visit Ghana's only natural lake, sacred to the Ashanti people",
+            location: "Lake Bosomtwe",
+          },
+          {
+            time: "10:00 AM",
+            activity: "Traditional Fishing Experience",
+            description: "Learn traditional fishing methods from local fishermen",
+            location: "Lake Bosomtwe",
+          },
+          {
+            time: "2:00 PM",
+            activity: "Sacred Grove Visit",
+            description: "Explore traditional sacred forest with spiritual significance",
+            location: "Local Sacred Grove",
+          },
+          {
+            time: "4:00 PM",
+            activity: "Souvenir Shopping",
+            description: "Final shopping for authentic Ashanti crafts and souvenirs",
+            location: "Central Market",
+          },
+        ],
+      },
+    ],
   }
 
-  // Default packages for general queries
-  return basePackages
-}
-
-function generateAttractions(query: string): Attraction[] {
-  const lowerQuery = query.toLowerCase()
-
-  const baseAttractions: Attraction[] = [
+  // Default itinerary for unlisted locations
+  const defaultItinerary: ItineraryDay[] = [
     {
-      name: "Cape Coast Castle",
-      location: "Cape Coast, Central Region",
-      description: "UNESCO World Heritage Site and former slave trading post with deep historical significance.",
-      image: "/images/cape-coast-castle-oceanview.webp",
+      day: 1,
+      title: "Arrival and Local Exploration",
+      activities: [
+        {
+          time: "9:00 AM",
+          activity: "Local Market Visit",
+          description: `Explore the vibrant local market in ${location} and experience daily life`,
+          location: "Central Market",
+        },
+        {
+          time: "11:00 AM",
+          activity: "Cultural Site Tour",
+          description: "Visit important cultural and historical sites in the area",
+          location: "Local Cultural Sites",
+        },
+        {
+          time: "2:00 PM",
+          activity: "Traditional Craft Workshop",
+          description: "Participate in local craft making with community artisans",
+          location: "Artisan Workshop",
+        },
+        {
+          time: "5:00 PM",
+          activity: "Local Cuisine Experience",
+          description: "Enjoy authentic local dishes and regional specialties",
+          location: "Local Restaurant",
+        },
+      ],
     },
     {
-      name: "Mole National Park",
-      location: "Northern Region",
-      description: "Ghana's largest wildlife park, home to elephants, antelopes, and over 300 bird species.",
-      image: "/images/mole-national-park-elephant.jpg",
-    },
-    {
-      name: "Kakum National Park",
-      location: "Central Region",
-      description: "Famous for its canopy walkway suspended 30 meters above the forest floor.",
-      image: "/kakum-canopy-walk.png",
+      day: 2,
+      title: "Nature and Adventure",
+      activities: [
+        {
+          time: "8:00 AM",
+          activity: "Nature Walk/Hike",
+          description: "Explore the natural beauty surrounding the area",
+          location: "Local Nature Area",
+        },
+        {
+          time: "11:00 AM",
+          activity: "Community Visit",
+          description: "Visit local community and learn about traditional lifestyle",
+          location: "Local Village",
+        },
+        {
+          time: "2:00 PM",
+          activity: "Cultural Performance",
+          description: "Enjoy traditional music, dance, and storytelling",
+          location: "Community Center",
+        },
+        {
+          time: "4:30 PM",
+          activity: "Sunset Viewing",
+          description: "Relax and enjoy beautiful sunset views",
+          location: "Scenic Viewpoint",
+        },
+      ],
     },
   ]
 
-  if (lowerQuery.includes("aflao") || lowerQuery.includes("volta")) {
-    return [
-      {
-        name: "Wli Waterfalls",
-        location: "Volta Region",
-        description: "Ghana's highest waterfall, cascading 60 meters down in a beautiful forest setting.",
-        image: "/placeholder.svg?height=200&width=300",
-      },
-      {
-        name: "Lake Volta",
-        location: "Eastern & Volta Regions",
-        description: "One of the world's largest man-made lakes, perfect for boat cruises and fishing.",
-        image: "/images/volta-lake.png",
-      },
-      {
-        name: "Adome Bridge",
-        location: "Volta Region",
-        description: "Scenic bridge over the Volta River offering beautiful views and photo opportunities.",
-        image: "/images/adome-bridge-volta-lake.jpeg",
-      },
-    ]
+  return itineraries[location] || defaultItinerary
+}
+
+function generateTips(location: string): string[] {
+  const tips: { [key: string]: string[] } = {
+    Aflao: [
+      "Bring your passport if you plan to cross into Togo",
+      "The border market is busiest in the morning",
+      "Learn basic Ewe greetings to connect with locals",
+      "Try the local palm wine and traditional dishes",
+      "Bargaining is expected in markets",
+      "Respect local customs and dress modestly",
+    ],
+    Kumasi: [
+      "Visit during the week to avoid weekend crowds at markets",
+      "Dress respectfully when visiting the palace",
+      "Learn about Adinkra symbols and their meanings",
+      "Try fufu and light soup, a local specialty",
+      "Bargain respectfully in markets",
+      "Book kente weaving workshops in advance",
+    ],
+    "Cape Coast": [
+      "Book castle tours in advance, especially on weekends",
+      "Bring comfortable walking shoes for castle exploration",
+      "The castle tours can be emotionally intense",
+      "Try fresh seafood at local restaurants",
+      "Visit early morning or late afternoon to avoid heat",
+      "Respect the historical significance of the sites",
+    ],
   }
 
-  if (lowerQuery.includes("accra")) {
-    return [
-      {
-        name: "Independence Square",
-        location: "Accra, Greater Accra",
-        description: "Historic square commemorating Ghana's independence with the iconic Black Star Gate.",
-        image: "/independence-square-accra.png",
-      },
-      {
-        name: "Kwame Nkrumah Memorial Park",
-        location: "Accra, Greater Accra",
-        description: "Memorial dedicated to Ghana's first president and independence leader.",
-        image: "/kwame-nkrumah-memorial-park.png",
-      },
-      {
-        name: "Makola Market",
-        location: "Accra, Greater Accra",
-        description: "Vibrant traditional market offering local goods, textiles, and authentic Ghanaian culture.",
-        image: "/makola-market-ghana.png",
-      },
-    ]
+  const defaultTips = [
+    "Learn basic local greetings in the regional language",
+    "Dress modestly and respect local customs",
+    "Try local cuisine and specialties",
+    "Bargain respectfully in markets",
+    "Bring comfortable walking shoes",
+    "Stay hydrated and use sun protection",
+  ]
+
+  return tips[location] || defaultTips
+}
+
+function generateEstimatedCost(location: string): EstimatedCost {
+  const costs: { [key: string]: EstimatedCost } = {
+    Aflao: {
+      accommodation: 300,
+      meals: 180,
+      transport: 150,
+      total: 630,
+    },
+    Kumasi: {
+      accommodation: 450,
+      meals: 240,
+      transport: 200,
+      total: 890,
+    },
+    "Cape Coast": {
+      accommodation: 400,
+      meals: 220,
+      transport: 180,
+      total: 800,
+    },
+    Accra: {
+      accommodation: 600,
+      meals: 300,
+      transport: 250,
+      total: 1150,
+    },
   }
 
-  return baseAttractions
+  const defaultCost: EstimatedCost = {
+    accommodation: 350,
+    meals: 200,
+    transport: 150,
+    total: 700,
+  }
+
+  return costs[location] || defaultCost
 }

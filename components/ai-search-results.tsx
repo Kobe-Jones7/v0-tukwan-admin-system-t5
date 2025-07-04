@@ -3,8 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Clock, Users, Star, Calendar } from "lucide-react"
-import Image from "next/image"
+import { MapPin, Calendar, Sparkles, CheckCircle } from "lucide-react"
 
 interface AISearchResultsProps {
   results: any
@@ -15,105 +14,102 @@ export function AISearchResults({ results }: AISearchResultsProps) {
 
   return (
     <div className="space-y-6">
-      {/* AI Response */}
-      {results.response && (
-        <Card>
+      {/* AI Generated Itinerary */}
+      {results.itinerary && (
+        <Card className="border-blue-200 bg-blue-50">
           <CardHeader>
-            <CardTitle className="text-lg">AI Travel Assistant</CardTitle>
+            <CardTitle className="text-xl flex items-center gap-2">
+              <Sparkles className="h-6 w-6 text-blue-600" />
+              Your Personalized {results.location} Itinerary
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 leading-relaxed">{results.response}</p>
+          <CardContent className="space-y-6">
+            <p className="text-gray-700 leading-relaxed">{results.overview}</p>
+
+            {/* Daily Itinerary */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold">Daily Schedule</h4>
+              {results.itinerary.map((day: any, index: number) => (
+                <Card key={index} className="bg-white">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Badge className="bg-blue-600">Day {day.day}</Badge>
+                      {day.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {day.activities.map((activity: any, actIndex: number) => (
+                      <div key={actIndex} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-16 text-sm font-medium text-gray-500">{activity.time}</div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <span className="font-medium">{activity.activity}</span>
+                          </div>
+                          <p className="text-sm text-gray-600">{activity.description}</p>
+                          {activity.location && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <MapPin className="h-3 w-3 text-gray-400" />
+                              <span className="text-xs text-gray-500">{activity.location}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Travel Tips */}
+            {results.tips && (
+              <div>
+                <h4 className="text-lg font-semibold mb-3">Local Tips & Recommendations</h4>
+                <div className="grid md:grid-cols-2 gap-3">
+                  {results.tips.map((tip: string, index: number) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-gray-700">{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Estimated Costs */}
+            {results.estimatedCost && (
+              <div className="bg-white p-4 rounded-lg">
+                <h4 className="text-lg font-semibold mb-3">Estimated Costs</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div>
+                    <div className="text-2xl font-bold text-blue-600">GH₵{results.estimatedCost.accommodation}</div>
+                    <div className="text-sm text-gray-600">Accommodation</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-blue-600">GH₵{results.estimatedCost.meals}</div>
+                    <div className="text-sm text-gray-600">Meals</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-blue-600">GH₵{results.estimatedCost.transport}</div>
+                    <div className="text-sm text-gray-600">Transport</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-green-600">GH₵{results.estimatedCost.total}</div>
+                    <div className="text-sm text-gray-600">Total</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <Calendar className="h-4 w-4 mr-2" />
+                Book This Itinerary
+              </Button>
+              <Button variant="outline">Customize Itinerary</Button>
+            </div>
           </CardContent>
         </Card>
-      )}
-
-      {/* Generated Tour Packages */}
-      {results.packages && results.packages.length > 0 && (
-        <div>
-          <h3 className="text-xl font-semibold mb-4">Recommended Tour Packages</h3>
-          <div className="grid md:grid-cols-2 gap-4">
-            {results.packages.map((pkg: any, index: number) => (
-              <Card key={index} className="overflow-hidden">
-                <div className="relative h-48">
-                  <Image
-                    src={pkg.image || "/placeholder.svg?height=200&width=400"}
-                    alt={pkg.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <Badge className="absolute top-3 right-3 bg-blue-600">{pkg.duration}</Badge>
-                </div>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{pkg.title}</CardTitle>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {pkg.location}
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-gray-600 line-clamp-2">{pkg.description}</p>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1 text-gray-400" />
-                        {pkg.duration}
-                      </div>
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1 text-gray-400" />
-                        Max {pkg.maxGroupSize}
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 mr-1 text-yellow-400 fill-current" />
-                      {pkg.rating}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-2xl font-bold text-blue-600">GH₵{pkg.price}</span>
-                      <span className="text-sm text-gray-500 ml-1">per person</span>
-                    </div>
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      Book Now
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Attractions */}
-      {results.attractions && results.attractions.length > 0 && (
-        <div>
-          <h3 className="text-xl font-semibold mb-4">Related Attractions</h3>
-          <div className="grid md:grid-cols-3 gap-4">
-            {results.attractions.map((attraction: any, index: number) => (
-              <Card key={index}>
-                <div className="relative h-32">
-                  <Image
-                    src={attraction.image || "/placeholder.svg?height=150&width=300"}
-                    alt={attraction.name}
-                    fill
-                    className="object-cover rounded-t-lg"
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <h4 className="font-semibold mb-1">{attraction.name}</h4>
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <MapPin className="h-3 w-3 mr-1" />
-                    {attraction.location}
-                  </div>
-                  <p className="text-xs text-gray-600 line-clamp-2">{attraction.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
       )}
     </div>
   )

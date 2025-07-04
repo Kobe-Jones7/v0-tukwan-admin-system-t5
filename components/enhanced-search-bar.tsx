@@ -1,54 +1,47 @@
 "use client"
-
-import type React from "react"
-
 import { useState } from "react"
-import { Search, Sparkles } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Search, Sparkles, MapPin, Calendar, Users } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { AISearchModal } from "@/components/ai-search-modal"
+
+const popularSearches = [
+  "Best beaches in Ghana",
+  "Cultural tours in Kumasi",
+  "Wildlife safari at Mole",
+  "Historical sites in Cape Coast",
+  "Adventure tours in Volta Region",
+]
+
+const quickFilters = [
+  { icon: MapPin, label: "Destinations", count: "50+" },
+  { icon: Calendar, label: "Day Tours", count: "25+" },
+  { icon: Users, label: "Group Tours", count: "15+" },
+]
 
 export function EnhancedSearchBar() {
   const [isAIModalOpen, setIsAIModalOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      // Redirect to search page with query
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
-    }
-  }
 
   return (
     <>
-      <div className="relative w-full">
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Search destinations, tours, or experiences..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4"
-            />
-          </div>
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-            Search
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Where do you want to go in Ghana?"
+            onClick={() => setIsAIModalOpen(true)}
+            className="pl-12 pr-20 py-4 text-lg bg-white/95 backdrop-blur-sm border-0 shadow-lg rounded-full cursor-pointer"
+            readOnly
+          />
+          <Button
+            onClick={() => setIsAIModalOpen(true)}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-full px-4 py-2"
+          >
+            <Sparkles className="h-4 w-4 mr-1" />
+            AI Search
           </Button>
-        </form>
-
-        {/* AI Search Button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setIsAIModalOpen(true)}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 px-3 text-xs bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:from-purple-600 hover:to-blue-600"
-        >
-          <Sparkles className="h-3 w-3 mr-1" />
-          AI Search
-        </Button>
+        </div>
       </div>
 
       <AISearchModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} />

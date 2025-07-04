@@ -107,11 +107,11 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-300">+233 XX XXX XXXX</span>
+                <span className="text-gray-300">+233 538132303</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-300">info@tukwan.com</span>
+                <span className="text-gray-300">team@tukwan.app</span>
               </div>
             </div>
           </div>

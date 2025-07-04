@@ -9,6 +9,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Query is required and must be a string" }, { status: 400 })
     }
 
+    console.log("Generating itinerary for:", query)
+
     const results = await generateAISearchResults(query)
 
     return NextResponse.json(results)

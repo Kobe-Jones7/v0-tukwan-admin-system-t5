@@ -19,7 +19,7 @@ export default function TermsOfServicePage() {
             </Link>
             <nav className="hidden md:flex gap-6">
               <Link href="/vooya-wallet" className="font-medium">
-                Vooya Wallet
+                Tukwan Wallet
               </Link>
               <Link href="/packages" className="font-medium">
                 Tour Packages
@@ -52,13 +52,13 @@ export default function TermsOfServicePage() {
           <div className="container px-4 md:px-6">
             <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-sm">
               <div className="prose prose-lg max-w-none">
-                <h2 className="text-2xl font-bold text-blue-600 mb-4">Vooya Terms of Service</h2>
+                <h2 className="text-2xl font-bold text-blue-600 mb-4">Tukwan Terms of Service</h2>
                 <p className="text-gray-600 mb-6">
                   <strong>Effective Date:</strong> {effectiveDate}
                 </p>
 
                 <p className="mb-6">
-                  Welcome to Vooya, your smart travel companion. By accessing or using our website, app, tours, wallet,
+                  Welcome to Tukwan, your smart travel companion. By accessing or using our website, app, tours, wallet,
                   or any other services we provide, you agree to the following terms and conditions:
                 </p>
 
@@ -72,8 +72,8 @@ export default function TermsOfServicePage() {
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold text-gray-800">2. Who Can Use Vooya</h3>
-                    <p className="text-gray-700 mb-3">To use Vooya, you must be:</p>
+                    <h3 className="text-xl font-bold text-gray-800">2. Who Can Use Tukwan</h3>
+                    <p className="text-gray-700 mb-3">To use Tukwan, you must be:</p>
                     <ul className="list-disc pl-6 text-gray-700 space-y-2">
                       <li>At least 18 years old or have permission from a legal guardian.</li>
                       <li>Able to form a binding contract under applicable laws.</li>
@@ -112,7 +112,7 @@ export default function TermsOfServicePage() {
                     <ul className="list-disc pl-6 text-gray-700 space-y-2">
                       <li>Payments can be made through our wallet or supported channels.</li>
                       <li>You may earn or redeem points based on our rewards system.</li>
-                      <li>Points are not cash and cannot be transferred outside Vooya.</li>
+                      <li>Points are not cash and cannot be transferred outside Tukwan.</li>
                     </ul>
                   </div>
 
@@ -139,14 +139,14 @@ export default function TermsOfServicePage() {
                   <div>
                     <h3 className="text-xl font-bold text-gray-800">8. Intellectual Property</h3>
                     <p className="text-gray-700">
-                      All content, logos, and technology on Vooya are protected and owned by Tukwan, Inc. You may not
+                      All content, logos, and technology on Tukwan are protected and owned by Tukwan, Inc. You may not
                       reproduce or distribute our material without permission.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-gray-800">9. Limitation of Liability</h3>
-                    <p className="text-gray-700 mb-3">Vooya is not liable for:</p>
+                    <p className="text-gray-700 mb-3">Tukwan is not liable for:</p>
                     <ul className="list-disc pl-6 text-gray-700 space-y-2">
                       <li>Injuries, losses, or damages during a tour or trip</li>
                       <li>Delays, cancellations, or disruptions caused by third parties</li>
@@ -158,7 +158,7 @@ export default function TermsOfServicePage() {
                   <div>
                     <h3 className="text-xl font-bold text-gray-800">10. Changes to Terms</h3>
                     <p className="text-gray-700">
-                      We may update these terms from time to time. Continued use of Vooya means you accept the new
+                      We may update these terms from time to time. Continued use of Tukwan means you accept the new
                       terms.
                     </p>
                   </div>
@@ -168,8 +168,8 @@ export default function TermsOfServicePage() {
                     <p className="text-gray-700">
                       If you have questions about these terms, contact us at:
                       <br />
-                      <a href="mailto:travel@tukwangh.com" className="text-blue-600 hover:underline">
-                        travel@tukwangh.com
+                      <a href="mailto:team@tukwan.app" className="text-blue-600 hover:underline">
+                        team@tukwan.app
                       </a>
                     </p>
                   </div>
@@ -177,8 +177,8 @@ export default function TermsOfServicePage() {
 
                 <div className="mt-12 pt-8 border-t border-gray-200">
                   <p className="text-gray-600 text-center">
-                    By using Vooya, you acknowledge that you have read, understood, and agree to be bound by these Terms
-                    of Service.
+                    By using Tukwan, you acknowledge that you have read, understood, and agree to be bound by these
+                    Terms of Service.
                   </p>
                 </div>
               </div>
