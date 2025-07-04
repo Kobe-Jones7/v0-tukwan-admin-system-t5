@@ -4,13 +4,42 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Calendar, Sparkles, CheckCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface AISearchResultsProps {
   results: any
 }
 
 export function AISearchResults({ results }: AISearchResultsProps) {
+  const router = useRouter()
+
   if (!results) return null
+
+  const handleBookNow = () => {
+    // Navigate to checkout with the itinerary data
+    const bookingData = {
+      type: "custom-itinerary",
+      location: results.location,
+      duration: results.itinerary?.length || 3,
+      estimatedCost: results.estimatedCost?.total || 1500,
+      itinerary: results.itinerary,
+    }
+
+    localStorage.setItem("bookingData", JSON.stringify(bookingData))
+    router.push("/checkout")
+  }
+
+  const handleCustomize = () => {
+    // Navigate to custom tour request page
+    const customData = {
+      location: results.location,
+      itinerary: results.itinerary,
+      estimatedCost: results.estimatedCost,
+    }
+
+    localStorage.setItem("customTourData", JSON.stringify(customData))
+    router.push("/custom-tour-request")
+  }
 
   return (
     <div className="space-y-6">
@@ -102,11 +131,13 @@ export function AISearchResults({ results }: AISearchResultsProps) {
             )}
 
             <div className="flex gap-3">
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleBookNow} className="bg-blue-600 hover:bg-blue-700">
                 <Calendar className="h-4 w-4 mr-2" />
                 Book This Itinerary
               </Button>
-              <Button variant="outline">Customize Itinerary</Button>
+              <Button onClick={handleCustomize} variant="outline">
+                Customize Itinerary
+              </Button>
             </div>
           </CardContent>
         </Card>

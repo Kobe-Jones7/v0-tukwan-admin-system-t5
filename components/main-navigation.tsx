@@ -168,14 +168,6 @@ export function MainNavigation({ mobile = false }: MainNavigationProps) {
             </div>
           )}
         </div>
-
-        {/* Direct Links */}
-        <Link href="/about" className="block px-3 py-2 hover:bg-gray-50 rounded-lg">
-          <span className="font-medium">About</span>
-        </Link>
-        <Link href="/help" className="block px-3 py-2 hover:bg-gray-50 rounded-lg">
-          <span className="font-medium">Help</span>
-        </Link>
       </nav>
     )
   }
@@ -262,14 +254,6 @@ export function MainNavigation({ mobile = false }: MainNavigationProps) {
           </div>
         )}
       </div>
-
-      {/* Direct Links */}
-      <Link href="/about" className="font-medium hover:text-blue-600 transition-colors">
-        About
-      </Link>
-      <Link href="/help" className="font-medium hover:text-blue-600 transition-colors">
-        Help
-      </Link>
     </nav>
   )
 }

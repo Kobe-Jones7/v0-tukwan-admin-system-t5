@@ -1,494 +1,390 @@
 "use client"
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, CreditCard, Wallet, Shield, Truck, CheckCircle, Smartphone, DollarSign } from "lucide-react"
+import type React from "react"
+
+import { useState, useEffect } from "react"
 import { SiteHeader } from "@/components/site-header"
 import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
+import { CreditCard, Smartphone, DollarSign, CheckCircle, MapPin, Clock } from "lucide-react"
+import Image from "next/image"
 
 export default function CheckoutPage() {
-  const [paymentMethod, setPaymentMethod] = useState("mobile-money")
+  const [bookingData, setBookingData] = useState<any>(null)
+  const [paymentMethod, setPaymentMethod] = useState<"mobile-money" | "card" | "paypal" | "vooya">("mobile-money")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    specialRequests: "",
+    travelDate: "",
+  })
 
-  const cartItems = [
-    {
-      id: 1,
-      title: "Handwoven Kente Cloth",
-      vendor: "Ashanti Crafts",
-      price: 450,
-      quantity: 1,
-      image: "/images/kente-cloth.png",
-    },
-    {
-      id: 2,
-      title: "Carved Wooden Mask",
-      vendor: "Heritage Arts",
-      price: 280,
-      quantity: 2,
-      image: "/images/wooden-mask.png",
-    },
-    {
-      id: 3,
-      title: "Handcrafted Beaded Necklace",
-      vendor: "Accra Jewelry",
-      price: 120,
-      quantity: 1,
-      image: "/images/beaded-necklace.png",
-    },
-    {
-      id: 4,
-      title: "Adinkra Print Fabric",
-      vendor: "Kumasi Textiles",
-      price: 180,
-      quantity: 3,
-      image: "/images/adinkra-fabric.png",
-    },
-  ]
+  useEffect(() => {
+    const data = localStorage.getItem("bookingData")
+    if (data) {
+      setBookingData(JSON.parse(data))
+    }
+  }, [])
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = subtotal > 300 ? 0 : 25
-  const tax = Math.round(subtotal * 0.125) // 12.5% VAT
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
 
-  // Apply discounts based on payment method
-  const getDiscount = () => {
+    // Simulate payment processing
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    setIsSubmitting(false)
+    setIsSuccess(true)
+
+    // Clear booking data
+    localStorage.removeItem("bookingData")
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  if (!bookingData) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <SiteHeader />
+        <main className="container px-4 md:px-6 py-16">
+          <div className="max-w-2xl mx-auto text-center">
+            <h1 className="text-2xl font-bold mb-4">No Booking Data Found</h1>
+            <p className="text-gray-600 mb-8">Please select a tour package or create an itinerary first.</p>
+            <Button onClick={() => window.history.back()} className="bg-blue-600 hover:bg-blue-700">
+              Go Back
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  const totalPrice = bookingData.estimatedCost || 1500
+  const getDiscountedPrice = () => {
     switch (paymentMethod) {
-      case "vooya-wallet":
-        return Math.round(subtotal * 0.05) // 5% discount
+      case "vooya":
+        return Math.round(totalPrice * 0.95) // 5% discount
       case "mobile-money":
-        return Math.round(subtotal * 0.02) // 2% discount
+        return Math.round(totalPrice * 0.98) // 2% discount
       default:
-        return 0
+        return totalPrice
     }
   }
 
-  const discount = getDiscount()
-  const total = subtotal + shipping + tax - discount
+  const discountedPrice = getDiscountedPrice()
+  const savings = totalPrice - discountedPrice
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen bg-gray-50">
       <SiteHeader />
 
-      <main className="flex-1 bg-gray-50">
-        <div className="container px-4 md:px-6 py-8">
-          {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/cart">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Cart
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold">Checkout</h1>
-              <p className="text-gray-600">Complete your African marketplace purchase</p>
-            </div>
-          </div>
+      <main className="container px-4 md:px-6 py-16">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8">Complete Your Booking</h1>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Checkout Form */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Shipping Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5" />
-                    Shipping Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input id="firstName" placeholder="Enter first name" />
+          {isSuccess ? (
+            <Card className="max-w-2xl mx-auto">
+              <CardContent className="text-center py-12">
+                <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                </div>
+                <h2 className="text-2xl font-semibold mb-4">Booking Confirmed!</h2>
+                <p className="text-gray-600 mb-6">
+                  Your {bookingData.type === "custom-itinerary" ? "custom itinerary" : "tour package"} has been booked
+                  successfully. You'll receive a confirmation email shortly with all the details.
+                </p>
+                <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                  <div className="text-sm text-gray-600">Booking Reference</div>
+                  <div className="text-lg font-bold">TUK-{Date.now().toString().slice(-6)}</div>
+                </div>
+                <Button onClick={() => (window.location.href = "/")} className="bg-blue-600 hover:bg-blue-700">
+                  Return to Home
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Booking Summary */}
+              <div className="lg:col-span-1">
+                <Card className="sticky top-4">
+                  <CardHeader>
+                    <CardTitle>Booking Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        {bookingData.location} Experience
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {bookingData.type === "custom-itinerary" ? "Custom AI-Generated Itinerary" : "Tour Package"}
+                      </p>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input id="lastName" placeholder="Enter last name" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" placeholder="Enter email address" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" placeholder="+233 XX XXX XXXX" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="address">Street Address</Label>
-                    <Input id="address" placeholder="Enter street address" />
-                  </div>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
-                      <Input id="city" placeholder="Enter city" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="region">Region</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select region" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="greater-accra">Greater Accra</SelectItem>
-                          <SelectItem value="ashanti">Ashanti</SelectItem>
-                          <SelectItem value="western">Western</SelectItem>
-                          <SelectItem value="central">Central</SelectItem>
-                          <SelectItem value="eastern">Eastern</SelectItem>
-                          <SelectItem value="volta">Volta</SelectItem>
-                          <SelectItem value="northern">Northern</SelectItem>
-                          <SelectItem value="upper-east">Upper East</SelectItem>
-                          <SelectItem value="upper-west">Upper West</SelectItem>
-                          <SelectItem value="brong-ahafo">Brong Ahafo</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="postal">Postal Code</Label>
-                      <Input id="postal" placeholder="Enter postal code" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
 
-              {/* Payment Method */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Payment Method
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                    {/* Mobile Money Option */}
-                    <div className="flex items-center space-x-2 p-4 border rounded-lg bg-green-50 border-green-200">
-                      <RadioGroupItem value="mobile-money" id="mobile-money" />
-                      <Label htmlFor="mobile-money" className="flex-1 cursor-pointer">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Smartphone className="h-5 w-5 text-green-600" />
-                            <div>
-                              <div className="font-medium flex items-center gap-2">
-                                Mobile Money
-                                <Badge className="bg-green-100 text-green-800 text-xs">2% OFF</Badge>
-                              </div>
-                              <div className="text-sm text-gray-600">MTN, Vodafone, AirtelTigo</div>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Clock className="h-4 w-4" />
+                      {bookingData.duration} days
+                    </div>
+
+                    {bookingData.itinerary && (
+                      <div>
+                        <h4 className="font-medium mb-2">Itinerary Highlights</h4>
+                        <div className="space-y-1">
+                          {bookingData.itinerary.slice(0, 3).map((day: any, index: number) => (
+                            <div key={index} className="text-sm text-gray-600">
+                              Day {day.day}: {day.title}
                             </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-medium text-green-600">
-                              Save GH₵ {Math.round(subtotal * 0.02)}
-                            </div>
-                            <div className="text-xs text-gray-500">Instant discount</div>
-                          </div>
+                          ))}
                         </div>
-                      </Label>
-                    </div>
-
-                    {/* Credit Card Option */}
-                    <div className="flex items-center space-x-2 p-4 border rounded-lg">
-                      <RadioGroupItem value="credit-card" id="credit-card" />
-                      <Label htmlFor="credit-card" className="flex-1 cursor-pointer">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <CreditCard className="h-5 w-5" />
-                            <div>
-                              <div className="font-medium">Credit/Debit Card</div>
-                              <div className="text-sm text-gray-600">Visa, Mastercard, American Express</div>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Image src="/placeholder.svg?height=24&width=36" alt="Visa" width={36} height={24} />
-                            <Image src="/placeholder.svg?height=24&width=36" alt="Mastercard" width={36} height={24} />
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-
-                    {/* PayPal Option */}
-                    <div className="flex items-center space-x-2 p-4 border rounded-lg">
-                      <RadioGroupItem value="paypal" id="paypal" />
-                      <Label htmlFor="paypal" className="flex-1 cursor-pointer">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <DollarSign className="h-5 w-5 text-blue-600" />
-                            <div>
-                              <div className="font-medium">PayPal</div>
-                              <div className="text-sm text-gray-600">Secure online payment</div>
-                            </div>
-                          </div>
-                          <div className="text-blue-600 font-bold">PayPal</div>
-                        </div>
-                      </Label>
-                    </div>
-
-                    {/* Vooya Wallet Option */}
-                    <div className="flex items-center space-x-2 p-4 border rounded-lg bg-blue-50 border-blue-200">
-                      <RadioGroupItem value="vooya-wallet" id="vooya-wallet" />
-                      <Label htmlFor="vooya-wallet" className="flex-1 cursor-pointer">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Wallet className="h-5 w-5 text-blue-600" />
-                            <div>
-                              <div className="font-medium flex items-center gap-2">
-                                Vooya Wallet
-                                <Badge className="bg-green-100 text-green-800 text-xs">5% OFF</Badge>
-                              </div>
-                              <div className="text-sm text-gray-600">Pay with your Vooya wallet balance</div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-medium text-green-600">
-                              Save GH₵ {Math.round(subtotal * 0.05)}
-                            </div>
-                            <div className="text-xs text-gray-500">Instant discount</div>
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-                  </RadioGroup>
-
-                  {/* Payment Method Forms */}
-                  {paymentMethod === "mobile-money" && (
-                    <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
-                      <div className="space-y-2">
-                        <Label htmlFor="mobileNetwork">Select Network</Label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Choose your network" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="mtn">MTN Mobile Money</SelectItem>
-                            <SelectItem value="vodafone">Vodafone Cash</SelectItem>
-                            <SelectItem value="airteltigo">AirtelTigo Money</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="mobileNumber">Mobile Number</Label>
-                        <Input id="mobileNumber" placeholder="0XX XXX XXXX" />
-                      </div>
-                      <div className="text-sm text-green-600 bg-green-100 p-3 rounded">
-                        <CheckCircle className="h-4 w-4 inline mr-2" />
-                        Save 2% with Mobile Money payment!
-                      </div>
-                    </div>
-                  )}
-
-                  {paymentMethod === "credit-card" && (
-                    <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-                      <div className="space-y-2">
-                        <Label htmlFor="cardNumber">Card Number</Label>
-                        <Input id="cardNumber" placeholder="1234 5678 9012 3456" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="expiry">Expiry Date</Label>
-                          <Input id="expiry" placeholder="MM/YY" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="cvv">CVV</Label>
-                          <Input id="cvv" placeholder="123" />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="cardName">Name on Card</Label>
-                        <Input id="cardName" placeholder="Enter name as on card" />
-                      </div>
-                    </div>
-                  )}
-
-                  {paymentMethod === "paypal" && (
-                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="flex items-center gap-3 text-blue-700">
-                        <DollarSign className="h-5 w-5" />
-                        <span className="font-medium">PayPal Payment</span>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="paypalEmail">PayPal Email</Label>
-                        <Input id="paypalEmail" type="email" placeholder="your@email.com" />
-                      </div>
-                      <div className="text-sm text-blue-600">
-                        You'll be redirected to PayPal to complete your payment securely.
-                      </div>
-                    </div>
-                  )}
-
-                  {paymentMethod === "vooya-wallet" && (
-                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <div className="flex items-center gap-3 text-blue-700">
-                        <CheckCircle className="h-5 w-5" />
-                        <span className="font-medium">Vooya Wallet Selected</span>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="walletPin">Wallet PIN</Label>
-                        <Input id="walletPin" type="password" placeholder="Enter your 4-digit PIN" maxLength={4} />
-                      </div>
-                      <div className="text-sm text-blue-600">Current Balance: GH₵ 2,450.00</div>
-                      <div className="flex items-start gap-2 text-sm text-green-700 bg-green-50 p-3 rounded">
-                        <CheckCircle className="h-4 w-4 mt-0.5" />
-                        <div>
-                          <div className="font-medium">5% Discount Applied!</div>
-                          <div>You're saving GH₵ {Math.round(subtotal * 0.05)} with Vooya Wallet</div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Billing Address */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Billing Address</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="sameAsShipping" />
-                    <Label htmlFor="sameAsShipping">Same as shipping address</Label>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Order Summary */}
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Cart Items */}
-                  <div className="space-y-3">
-                    {cartItems.map((item) => (
-                      <div key={item.id} className="flex gap-3">
-                        <div className="relative h-12 w-12 flex-shrink-0">
-                          <Image
-                            src={item.image || "/placeholder.svg"}
-                            alt={item.title}
-                            fill
-                            className="object-cover rounded"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium truncate">{item.title}</div>
-                          <div className="text-xs text-gray-600">Qty: {item.quantity}</div>
-                        </div>
-                        <div className="text-sm font-medium">GH₵ {item.price * item.quantity}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Separator />
-
-                  {/* Price Breakdown */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Subtotal ({cartItems.length} items)</span>
-                      <span>GH₵ {subtotal}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Shipping</span>
-                      <span className={shipping === 0 ? "text-green-600" : ""}>
-                        {shipping === 0 ? "FREE" : `GH₵ ${shipping}`}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>VAT (12.5%)</span>
-                      <span>GH₵ {tax}</span>
-                    </div>
-                    {discount > 0 && (
-                      <div className="flex justify-between text-sm text-green-600">
-                        <span>
-                          {paymentMethod === "mobile-money" && "Mobile Money Discount (2%)"}
-                          {paymentMethod === "vooya-wallet" && "Vooya Wallet Discount (5%)"}
-                        </span>
-                        <span>-GH₵ {discount}</span>
                       </div>
                     )}
+
                     <Separator />
-                    <div className="flex justify-between font-bold text-lg">
-                      <span>Total</span>
-                      <span className="text-blue-600">GH₵ {total}</span>
-                    </div>
-                    {discount > 0 && <div className="text-xs text-green-600 text-right">You saved GH₵ {discount}!</div>}
-                  </div>
 
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 h-12">
-                    <Shield className="mr-2 h-4 w-4" />
-                    Complete Order
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Security & Trust */}
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-sm">
-                      <Shield className="h-4 w-4 text-green-600" />
-                      <span>SSL encrypted checkout</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <Truck className="h-4 w-4 text-blue-600" />
-                      <span>Free shipping on orders over GH₵ 300</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>Authenticity guaranteed</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Payment Method Benefits */}
-              {(paymentMethod === "vooya-wallet" || paymentMethod === "mobile-money") && (
-                <Card
-                  className={`border-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-200 bg-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-50`}
-                >
-                  <CardHeader>
-                    <CardTitle className={`text-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-800 text-sm`}>
-                      {paymentMethod === "vooya-wallet" ? "Vooya Wallet Benefits" : "Mobile Money Benefits"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div
-                      className={`space-y-2 text-sm text-${paymentMethod === "vooya-wallet" ? "blue" : "green"}-700`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-3 w-3" />
-                        <span>{paymentMethod === "vooya-wallet" ? "5%" : "2%"} instant discount on all purchases</span>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Base Price:</span>
+                        <span>GH₵ {totalPrice.toLocaleString()}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-3 w-3" />
-                        <span>Faster checkout process</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-3 w-3" />
-                        <span>Enhanced purchase protection</span>
-                      </div>
-                      {paymentMethod === "vooya-wallet" && (
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="h-3 w-3" />
-                          <span>Earn rewards on every transaction</span>
+                      {savings > 0 && (
+                        <div className="flex justify-between text-green-600">
+                          <span>
+                            {paymentMethod === "mobile-money" && "Mobile Money discount:"}
+                            {paymentMethod === "vooya" && "Tukwan Wallet discount:"}
+                          </span>
+                          <span>-GH₵ {savings.toLocaleString()}</span>
                         </div>
                       )}
+                      <Separator />
+                      <div className="flex justify-between font-bold text-lg">
+                        <span>Total:</span>
+                        <span className="text-blue-600">GH₵ {discountedPrice.toLocaleString()}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-              )}
+              </div>
+
+              {/* Booking Form */}
+              <div className="lg:col-span-2">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Personal Information */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Personal Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Full Name *</Label>
+                          <Input
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) => handleInputChange("name", e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email Address *</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => handleInputChange("email", e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone Number *</Label>
+                          <Input
+                            id="phone"
+                            value={formData.phone}
+                            onChange={(e) => handleInputChange("phone", e.target.value)}
+                            placeholder="+233 XXX XXX XXX"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="travelDate">Preferred Travel Date</Label>
+                          <Input
+                            id="travelDate"
+                            type="date"
+                            value={formData.travelDate}
+                            onChange={(e) => handleInputChange("travelDate", e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="specialRequests">Special Requests (Optional)</Label>
+                        <Textarea
+                          id="specialRequests"
+                          value={formData.specialRequests}
+                          onChange={(e) => handleInputChange("specialRequests", e.target.value)}
+                          placeholder="Any dietary requirements, accessibility needs, etc."
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Payment Method */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Payment Method</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Mobile Money */}
+                        <div
+                          className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                            paymentMethod === "mobile-money" ? "border-blue-600 bg-blue-50" : "hover:bg-gray-50"
+                          }`}
+                          onClick={() => setPaymentMethod("mobile-money")}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Smartphone className="h-6 w-6 text-green-600" />
+                            <div>
+                              <div className="font-medium">Mobile Money</div>
+                              <div className="text-sm text-green-600">2% discount</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Credit Card */}
+                        <div
+                          className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                            paymentMethod === "card" ? "border-blue-600 bg-blue-50" : "hover:bg-gray-50"
+                          }`}
+                          onClick={() => setPaymentMethod("card")}
+                        >
+                          <div className="flex items-center gap-3">
+                            <CreditCard className="h-6 w-6 text-gray-600" />
+                            <div>
+                              <div className="font-medium">Credit Card</div>
+                              <div className="text-sm text-gray-500">Visa, Mastercard</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* PayPal */}
+                        <div
+                          className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                            paymentMethod === "paypal" ? "border-blue-600 bg-blue-50" : "hover:bg-gray-50"
+                          }`}
+                          onClick={() => setPaymentMethod("paypal")}
+                        >
+                          <div className="flex items-center gap-3">
+                            <DollarSign className="h-6 w-6 text-blue-600" />
+                            <div>
+                              <div className="font-medium">PayPal</div>
+                              <div className="text-sm text-gray-500">Secure payment</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Tukwan Wallet */}
+                        <div
+                          className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                            paymentMethod === "vooya" ? "border-blue-600 bg-blue-50" : "hover:bg-gray-50"
+                          }`}
+                          onClick={() => setPaymentMethod("vooya")}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Image src="/images/tukwan-logo.png" alt="Tukwan" width={24} height={24} />
+                            <div>
+                              <div className="font-medium">Tukwan Wallet</div>
+                              <div className="text-sm text-green-600">5% discount</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Payment Details */}
+                      {paymentMethod === "mobile-money" && (
+                        <div className="space-y-3 p-4 bg-green-50 rounded-lg border border-green-200">
+                          <div className="space-y-2">
+                            <Label htmlFor="mobileNetwork">Select Network</Label>
+                            <select id="mobileNetwork" className="w-full p-2 border rounded-md">
+                              <option value="">Choose your network</option>
+                              <option value="mtn">MTN Mobile Money</option>
+                              <option value="vodafone">Vodafone Cash</option>
+                              <option value="airteltigo">AirtelTigo Money</option>
+                            </select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="mobileNumber">Mobile Number</Label>
+                            <Input id="mobileNumber" placeholder="0XX XXX XXXX" />
+                          </div>
+                        </div>
+                      )}
+
+                      {paymentMethod === "card" && (
+                        <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+                          <div className="space-y-2">
+                            <Label htmlFor="cardNumber">Card Number</Label>
+                            <Input id="cardNumber" placeholder="1234 5678 9012 3456" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="expiry">Expiry Date</Label>
+                              <Input id="expiry" placeholder="MM/YY" />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="cvv">CVV</Label>
+                              <Input id="cvv" placeholder="123" />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="cardName">Name on Card</Label>
+                            <Input id="cardName" placeholder="Enter name as on card" />
+                          </div>
+                        </div>
+                      )}
+
+                      {paymentMethod === "paypal" && (
+                        <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                          <div className="space-y-2">
+                            <Label htmlFor="paypalEmail">PayPal Email</Label>
+                            <Input id="paypalEmail" type="email" placeholder="your@email.com" />
+                          </div>
+                        </div>
+                      )}
+
+                      {paymentMethod === "vooya" && (
+                        <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                          <div className="space-y-2">
+                            <Label htmlFor="walletPin">Wallet PIN</Label>
+                            <Input id="walletPin" type="password" placeholder="Enter your 4-digit PIN" maxLength={4} />
+                          </div>
+                          <div className="text-sm text-blue-600">Current Balance: GH₵ 2,450.00</div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || !formData.name || !formData.email || !formData.phone}
+                    className="w-full bg-blue-600 hover:bg-blue-700 py-3 text-lg"
+                  >
+                    {isSubmitting ? "Processing Payment..." : `Pay GH₵ ${discountedPrice.toLocaleString()}`}
+                  </Button>
+                </form>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
 
