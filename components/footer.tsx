@@ -1,47 +1,32 @@
 import Image from "next/image"
 import Link from "next/link"
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Youtube,
-  Mail,
-  Phone,
-  MapPin,
-} from "lucide-react"
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-6 py-16">
+    <footer className="bg-gray-900 text-white text-sm font-light">
+      <div className="container px-4 md:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <Image
-                src="/images/tukwan-logo.png"
-                alt="Tukwan"
-                width={40}
-                height={40}
-                className="rounded-lg"
-              />
-              <span className="text-xl font-bold">Tukwan</span>
+            <div className="flex items-center space-x-2">
+              <Image src="/images/tukwan-logo.png" alt="Tukwan" width={40} height={40} className="rounded-lg" />
+              <span className="text-xl font-semibold">Tukwan</span>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Discover the beauty and rich culture of Ghana with our expertly
-              crafted tours and authentic experiences.
+            <p className="text-gray-400">
+              Discover the beauty and rich culture of Ghana with our expertly crafted tours and authentic experiences.
             </p>
-            <div className="flex space-x-4 pt-2">
-              <Link href="#" className="hover:text-white text-gray-400">
+            <div className="flex space-x-4">
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook className="h-5 w-5" />
               </Link>
-              <Link href="#" className="hover:text-white text-gray-400">
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Twitter className="h-5 w-5" />
               </Link>
-              <Link href="#" className="hover:text-white text-gray-400">
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Instagram className="h-5 w-5" />
               </Link>
-              <Link href="#" className="hover:text-white text-gray-400">
+              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Youtube className="h-5 w-5" />
               </Link>
             </div>
@@ -49,31 +34,26 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-base font-semibold">Quick Links</h3>
+            <ul className="space-y-2">
               <li>
-                <Link href="/tour-packages" className="text-gray-300 hover:text-white">
+                <Link href="/tour-packages" className="text-gray-400 hover:text-white transition-colors">
                   Tour Packages
                 </Link>
               </li>
               <li>
-                <Link href="/attractions" className="text-gray-300 hover:text-white">
+                <Link href="/attractions" className="text-gray-400 hover:text-white transition-colors">
                   Attractions
                 </Link>
               </li>
               <li>
-                <Link href="/marketplace" className="text-gray-300 hover:text-white">
+                <Link href="/marketplace" className="text-gray-400 hover:text-white transition-colors">
                   Marketplace
                 </Link>
               </li>
               <li>
-                <Link href="/discover-ghana" className="text-gray-300 hover:text-white">
+                <Link href="/discover-ghana" className="text-gray-400 hover:text-white transition-colors">
                   Discover Ghana
-                </Link>
-              </li>
-              <li>
-                <Link href="/become-partner" className="text-gray-300 hover:text-white">
-                  Become a Partner
                 </Link>
               </li>
             </ul>
@@ -81,74 +61,58 @@ export function Footer() {
 
           {/* Services */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Services</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-base font-semibold">Services</h3>
+            <ul className="space-y-2">
               <li>
-                <Link href="/services" className="text-gray-300 hover:text-white">
+                <Link href="/services" className="text-gray-400 hover:text-white transition-colors">
                   Tour Planning
                 </Link>
               </li>
               <li>
-                <Link href="/custom-tour-request" className="text-gray-300 hover:text-white">
+                <Link href="/custom-tour-request" className="text-gray-400 hover:text-white transition-colors">
                   Custom Tours
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard" className="text-gray-300 hover:text-white">
+                <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors">
                   Travel Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/vooya-wallet" className="text-gray-300 hover:text-white">
+                <Link href="/vooya-wallet" className="text-gray-400 hover:text-white transition-colors">
                   Tukwan Wallet
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-300 hover:text-white">
+                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Support */}
+          {/* Support & Contact */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Support</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="text-base font-semibold">Support</h3>
+            <ul className="space-y-2">
               <li>
-                <Link href="/help" className="text-gray-300 hover:text-white">
+                <Link href="/help" className="text-gray-400 hover:text-white transition-colors">
                   Help Center
                 </Link>
               </li>
-              <li>
-                <Link href="/faq" className="text-gray-300 hover:text-white">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="text-gray-300 hover:text-white">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-gray-300 hover:text-white">
-                  Terms of Service
-                </Link>
-              </li>
             </ul>
-
-            <div className="space-y-3 text-sm pt-4 text-gray-300">
-              <div className="flex items-center gap-2">
+            <div className="space-y-3 pt-4">
+              <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-gray-400" />
-                <span>team@tukwan.app</span>
+                <span className="text-gray-400">team@tukwan.app</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-gray-400" />
-                <span>+233 538132303</span>
+                <span className="text-gray-400">+233 538132303</span>
               </div>
-              <div className="flex items-start gap-2">
+              <div className="flex items-start space-x-2">
                 <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
-                <span>
+                <span className="text-gray-400">
                   Accra, Ghana
                   <br />
                   West Africa
@@ -159,13 +123,19 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-12 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-            <div>© 2025 Tukwan. All rights reserved.</div>
-            <div className="flex flex-wrap gap-6 justify-center">
-              <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-white">Terms of Service</Link>
-              <Link href="/faq" className="hover:text-white">FAQ</Link>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="text-gray-500">© 2025 Tukwan. All rights reserved.</div>
+            <div className="flex space-x-6">
+              <Link href="/privacy" className="text-gray-500 hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-gray-500 hover:text-white transition-colors">
+                Terms
+              </Link>
+              <Link href="/faq" className="text-gray-500 hover:text-white transition-colors">
+                FAQ
+              </Link>
             </div>
           </div>
         </div>
