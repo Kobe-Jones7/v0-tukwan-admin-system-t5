@@ -7,7 +7,8 @@ type Props = {}
 const SignInCallback = async (props: Props) => {
 
     const user = await initUser()
-    if (!user) redirect('/dashboard/sign-in')
+    console.log('User from callback:', user)
+    if (!user || !user?.success) redirect('/dashboard/sign-in')
 
     redirect('/dashboard')
 }

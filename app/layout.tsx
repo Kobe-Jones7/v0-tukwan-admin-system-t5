@@ -1,14 +1,8 @@
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
+import { MapProvider } from '@/providers/map'
 
 export const metadata: Metadata = {
   title: "Tukwan - Discover Africa's Hidden Gems",
@@ -33,7 +27,11 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body>{children}</body>
+        <body>
+          <MapProvider>
+            {children}
+          </MapProvider>
+        </body>
       </html>
     </ClerkProvider>
   )

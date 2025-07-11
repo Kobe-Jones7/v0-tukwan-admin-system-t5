@@ -12,29 +12,24 @@ import {
 } from "@/components/ui/sidebar"
 import {
     LayoutDashboard,
-    BarChart3,
     Settings,
     HelpCircle,
     Map,
-    User,
     Calendar,
     Users,
-    ShoppingBag,
     Package,
 } from "lucide-react"
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from './ui/button'
 import { usePathname } from 'next/navigation'
-import { UserButton, useUser } from "@clerk/nextjs"
+import { UserButton } from "@clerk/nextjs"
 
 type Props = {}
 
 const SidebarComponent = ({ }: Props) => {
 
     const pathname = usePathname()
-    const { isSignedIn, user, isLoaded } = useUser()
-    console.log('user: ', user, 'is signed in:', isSignedIn, 'is loaded:', isLoaded)
 
     // Define navigation items based on partner type
     const getNavItems = () => {
@@ -44,11 +39,6 @@ const SidebarComponent = ({ }: Props) => {
                 {
                     title: "Attractions",
                     href: "/dashboard/attractions",
-                    icon: Map,
-                },
-                {
-                    title: "Tours",
-                    href: "/dashboard/tours",
                     icon: Map,
                 },
                 {
@@ -67,23 +57,6 @@ const SidebarComponent = ({ }: Props) => {
                     icon: Calendar,
                 }
             ],
-            // [
-            //     {
-            //         title: "Products",
-            //         href: "/dashboard/products",
-            //         icon: ShoppingBag,
-            //     },
-            //     {
-            //         title: "Orders",
-            //         href: "/dashboard/orders",
-            //         icon: Package,
-            //     },
-            //     {
-            //         title: "Customers",
-            //         href: "/dashboard/customers",
-            //         icon: Users,
-            //     }
-            // ],
 
             // NOTE: below are common  links
             [
@@ -92,16 +65,6 @@ const SidebarComponent = ({ }: Props) => {
                     href: "/dashboard",
                     icon: LayoutDashboard,
                 },
-                // {
-                //     title: "Profile",
-                //     href: "/dashboard/profile",
-                //     icon: User,
-                // },
-                // {
-                //     title: "Analytics",
-                //     href: "/dashboard/analytics",
-                //     icon: BarChart3,
-                // },
                 {
                     title: "Settings",
                     href: "/dashboard/settings",
@@ -191,7 +154,7 @@ const SidebarComponent = ({ }: Props) => {
                             <div className="py-2" key={i}>
                                 {section.map(item =>
                                     <SidebarMenuItem key={item.href}>
-                                        <SidebarMenuButton asChild isActive={pathname === item.href} className="flex items-center gap-3">
+                                        <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)} className="flex items-center gap-3">
                                             <Link href={item.href}>
                                                 <item.icon className="h-5 w-5" />
                                                 <span>{item.title}</span>

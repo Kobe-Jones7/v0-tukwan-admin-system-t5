@@ -2,7 +2,6 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { routes } from "./routes";
 
-const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 const isPrivateRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
@@ -19,10 +18,12 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
 	// Authenticated user ID
 	const userId = (await auth()).userId;
+	console.log(userId);
 
 	if (isAdminSubdomain) {
 		// If not signed in, redirect to sign-in
 		if (!userId) {
+			console.log("not signed in. redirect to sign in page");
 			const rewrittenUrl = url.clone();
 			rewrittenUrl.pathname = "/sign-in";
 			return NextResponse.rewrite(new URL(rewrittenUrl, req.url));
