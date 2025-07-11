@@ -10,7 +10,7 @@ import React from 'react'
 type Props = { params: { slug: string } }
 
 const AttractionDetails = async ({ params }: Props) => {
-    const { slug } = params
+    const { slug } = await params
 
     const { data: attraction } = await getSingleAttraction(slug)
     console.log('attraction:', attraction)

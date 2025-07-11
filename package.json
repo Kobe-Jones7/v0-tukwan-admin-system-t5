@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"build": "next build",
-		"dev": "rm -rf .next/ &&rm -rf out/ && next dev --turbopack",
+		"dev": "rm -rf .next/ &&rm -rf out/ && npx prisma generate && npx prisma db push && next dev --turbopack",
 		"prisma": "npx prisma generate && npx prisma db push",
 		"lint": "next lint",
 		"start": "next start"

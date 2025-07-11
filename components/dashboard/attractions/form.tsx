@@ -1,30 +1,33 @@
 "use client"
 
-import { ArrowLeft, MapPin, Save, Trash } from 'lucide-react'
+import { ArrowLeft, Loader2, MapPin, Save, Trash } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
+import { toast } from 'sonner'
 import Link from 'next/link'
 import clsx from 'clsx'
 import z from 'zod'
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { upsertAttraction } from '@/lib/queries/attractions'
+import { deleteAttraction, upsertAttraction } from '@/lib/queries/attractions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Attractions } from '@/app/generated/prisma'
 import { Textarea } from '@/components/ui/textarea'
+import CustomModal from '@/components/custom-modal'
 import FileUpload from '@/components/file-upload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useModal } from '@/providers/modal'
 import { Place } from '@/components/place'
 import { routes } from '@/routes'
-import { toast } from 'sonner'
 
 type Props = { data?: Attractions }
 
 const AttractionForm = ({ data }: Props) => {
+    const { setOpen, setClose } = useModal();
     const router = useRouter()
 
     const formSchema = z.object({
@@ -84,37 +87,42 @@ const AttractionForm = ({ data }: Props) => {
                 entry_fee: data?.visitingInformation.entry_fee ?? "",
             },
         },
-        mode: 'onBlur'
+        mode: 'onChange'
     })
 
 
-    const [isSubmitting, setIsSubmitting] = useState(form.formState.isSubmitting || form.formState.isValid)
+    const isSubmitting = form.formState.isSubmitting
 
     const images = form.watch('images') || []
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        console.log('form data:', form.getValues())
-
-        console.log('form issues:', form.formState.defaultValues)
-
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            setIsSubmitting(true)
-            await upsertAttraction({ id: data?.id!, ...form.getValues() })
+            await upsertAttraction(values, data?.id)
+            toast.success(data ? 'Attraction updated successfully.' : 'Attraction created successfully.')
             router.push(routes.dashboard.attractions.index)
         } catch (error) {
             console.error('Error submitting form:', error)
             toast.error('Failed to submit attraction form.')
             return
-        } finally {
-            setIsSubmitting(false)
         }
     }
 
+    const handleDelete = async () => {
+        try {
+            await deleteAttraction(data?.slug!)
+        } catch (error) {
+            console.error('Error deleting attraction:', error)
+            toast.error('Failed to delete attraction.')
+        } finally {
+            router.push(routes.dashboard.attractions.index)
+            setClose()
+            toast.success('Attraction deleted successfully.')
+        }
+    }
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <div className="grid gap-6 lg:grid-cols-2">
                     <div className="space-y-6">
                         <Card>
@@ -141,6 +149,9 @@ const AttractionForm = ({ data }: Props) => {
                                                                 .toLowerCase()
                                                                 .replace(/\s+/g, '-')
                                                                 .replace(/[^a-z0-9-]/g, '')
+                                                                .replace(/-{2,}/g, '-')
+                                                                .replace(/^-+/, '')
+                                                                .replace(/-+$/, '');
                                                             form.setValue('slug', slug, { shouldValidate: true })
                                                         }} />
                                                 </FormControl>
@@ -367,26 +378,62 @@ const AttractionForm = ({ data }: Props) => {
                     </div>
                 </div>
 
-                <div className="mt-6 flex justify-between gap-4">
-                    <Button variant="destructive" onClick={() => { }} asChild>
-                        <div className="flex items-center justify-center">
-                            <Trash className="h-5 w-5" />
-                            <span className='hidden md:block'>Delete Attraction</span>
-                        </div>
-                    </Button>
+                <div className={clsx({ 'justify-between': data, 'justify-end': !data }, "mt-6 flex gap-4")}>
+                    {data &&
+                        <Button
+                            type='button'
+                            variant="destructive"
+                            className='cursor-pointer'
+                            disabled={isSubmitting}
+                            onClick={() => {
+                                setOpen(
+                                    <CustomModal title='Delete Attraction'>
+                                        <div className="flex flex-col gap-8">
+                                            <div className="text-center">
+                                                <p className='text-sm'>Are you sure you want to delete your business account?.</p>
+                                                <p>This cannot be undone.</p>
+                                            </div>
+
+                                            <div className="flex gap-4 justify-around">
+                                                <Button className="w-max" variant="outline" type="button" onClick={setClose} // disabled={isSubmitting}
+                                                >
+                                                    No, cancel
+                                                </Button>
+
+                                                <Button
+                                                    className="w-max !border-error !bg-error !text-white"
+                                                    type="button"
+                                                    {...{ isSubmitting }}
+                                                    onClick={handleDelete}
+                                                >
+                                                    Yes, delete
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </CustomModal>
+                                )
+                            }}>
+                            <div className="flex items-center justify-center">
+                                <Trash className="h-5 w-5" />
+                                <span className='hidden md:block'>Delete Attraction</span>
+                            </div>
+                        </Button>
+                    }
                     <div className="flex items-end gap-4">
-                        <Button variant="outline" asChild>
+                        <Button variant="outline" disabled={isSubmitting} asChild>
                             <Link href={routes.dashboard.attractions.index}>Cancel</Link>
                         </Button>
+
                         <Button
                             disabled={!form.formState.isValid || isSubmitting}
                             type="submit"
+                            className='cursor-pointer flex items-center justify-center gap-4'
                         >
-                            <div className="flex items-center justify-center gap-4">
+                            {isSubmitting ?
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :
                                 <Save className='w-5 h-5' />
-
-                                <span className='hidden md:block'> {isSubmitting ? "Saving..." : "Save Attraction"}</span>
-                            </div>
+                            }
+                            <span className='hidden md:block'> {isSubmitting ? "Saving..." : "Save Attraction"}</span>
                         </Button>
                     </div>
                 </div>

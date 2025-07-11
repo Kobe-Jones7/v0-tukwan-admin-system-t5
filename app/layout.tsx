@@ -3,6 +3,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
 import { MapProvider } from '@/providers/map'
+import ModalProvider from '@/providers/modal'
 
 export const metadata: Metadata = {
   title: "Tukwan - Discover Africa's Hidden Gems",
@@ -31,9 +32,11 @@ export default function RootLayout({
     >
       <html lang="en">
         <body>
-          <MapProvider>
-            {children}
-          </MapProvider>
+          <ModalProvider>
+            <MapProvider>
+              {children}
+            </MapProvider>
+          </ModalProvider>
         </body>
       </html>
     </ClerkProvider>

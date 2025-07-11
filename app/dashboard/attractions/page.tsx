@@ -79,15 +79,6 @@ export default async function ToursPage() {
                   <TableCell>0</TableCell>
                   <TableCell>N/A</TableCell>
                 </CustomTableRow>
-                // <TableRow className="cursor-pointer" key={attraction.id}>
-                //   <TableCell className="font-medium">{attraction.name}</TableCell>
-                //   <TableCell>{attraction.location.address.split(',').pop()}, {attraction.location.region}</TableCell>
-                //   <TableCell>
-                //     {attraction.visitingInformation.entry_fee}
-                //   </TableCell>
-                //   <TableCell>0</TableCell>
-                //   <TableCell>N/A</TableCell>
-                // </TableRow>
               ))}
             </TableBody>
           </Table>

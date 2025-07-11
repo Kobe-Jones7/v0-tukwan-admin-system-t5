@@ -10,7 +10,8 @@ import { db } from "@/lib/db";
  * Create or update attraction based on slug
  */
 export async function upsertAttraction(
-	data: Omit<Attractions, "createdAt" | "updatedAt">
+	data: Omit<Attractions, "id" | "createdAt" | "updatedAt">,
+	id?: string
 ): Promise<
 	| { success: true; attraction: Attractions }
 	| { success: false; error: string }
@@ -24,8 +25,15 @@ export async function upsertAttraction(
 
 	try {
 		console.log("Upserting attraction with data:", data);
+		let query_where;
+		if (id) {
+			query_where = { id };
+		} else {
+			query_where = { slug: data.slug };
+		}
+
 		const attraction = await db.attractions.upsert({
-			where: { slug: data.slug },
+			where: query_where,
 			update: { ...data },
 			create: { ...data },
 		});
