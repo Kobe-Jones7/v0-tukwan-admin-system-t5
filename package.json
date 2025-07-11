@@ -5,6 +5,7 @@
 	"scripts": {
 		"build": "next build",
 		"dev": "rm -rf .next/ &&rm -rf out/ && next dev --turbopack",
+		"prisma": "npx prisma generate && npx prisma db push",
 		"lint": "next lint",
 		"start": "next start"
 	},

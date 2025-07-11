@@ -9,117 +9,163 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarProvider,
-    SidebarTrigger,
 } from "@/components/ui/sidebar"
 import {
     LayoutDashboard,
-    Package,
-    ShoppingBag,
-    Calendar,
-    Users,
     BarChart3,
     Settings,
     HelpCircle,
-    LogOut,
-    Bell,
-    User,
     Map,
+    User,
+    Calendar,
+    Users,
+    ShoppingBag,
+    Package,
 } from "lucide-react"
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from './ui/button'
-import { currentUser } from '@clerk/nextjs/server'
-import { redirect, usePathname } from 'next/navigation'
-import { UserButton } from "@clerk/nextjs"
+import { usePathname } from 'next/navigation'
+import { UserButton, useUser } from "@clerk/nextjs"
 
 type Props = {}
 
 const SidebarComponent = ({ }: Props) => {
 
     const pathname = usePathname()
+    const { isSignedIn, user, isLoaded } = useUser()
+    console.log('user: ', user, 'is signed in:', isSignedIn, 'is loaded:', isLoaded)
 
     // Define navigation items based on partner type
     const getNavItems = () => {
         const commonItems = [
-            {
-                title: "Dashboard",
-                href: "/dashboard",
-                icon: LayoutDashboard,
-            },
-            {
-                title: "Profile",
-                href: "/dashboard/profile",
-                icon: User,
-            },
-            {
-                title: "Analytics",
-                href: "/dashboard/analytics",
-                icon: BarChart3,
-            },
-            {
-                title: "Settings",
-                href: "/dashboard/settings",
-                icon: Settings,
-            },
+            // NOTE: below are role specific links
+            [
+                {
+                    title: "Attractions",
+                    href: "/dashboard/attractions",
+                    icon: Map,
+                },
+                {
+                    title: "Tours",
+                    href: "/dashboard/tours",
+                    icon: Map,
+                },
+                {
+                    title: "Guides",
+                    href: "/dashboard/guides",
+                    icon: Users,
+                },
+                {
+                    title: "Tour Packages",
+                    href: "/dashboard/tour-packages",
+                    icon: Package,
+                },
+                {
+                    title: "Bookings",
+                    href: "/dashboard/bookings",
+                    icon: Calendar,
+                }
+            ],
+            // [
+            //     {
+            //         title: "Products",
+            //         href: "/dashboard/products",
+            //         icon: ShoppingBag,
+            //     },
+            //     {
+            //         title: "Orders",
+            //         href: "/dashboard/orders",
+            //         icon: Package,
+            //     },
+            //     {
+            //         title: "Customers",
+            //         href: "/dashboard/customers",
+            //         icon: Users,
+            //     }
+            // ],
+
+            // NOTE: below are common  links
+            [
+                {
+                    title: "Dashboard",
+                    href: "/dashboard",
+                    icon: LayoutDashboard,
+                },
+                // {
+                //     title: "Profile",
+                //     href: "/dashboard/profile",
+                //     icon: User,
+                // },
+                // {
+                //     title: "Analytics",
+                //     href: "/dashboard/analytics",
+                //     icon: BarChart3,
+                // },
+                {
+                    title: "Settings",
+                    href: "/dashboard/settings",
+                    icon: Settings,
+                }
+            ]
         ]
 
         // const specificItems = {
         //     "tour-guide": [
-        //         // {
-        //         //   title: "Tours",
-        //         //   href: "/dashboard/tours",
-        //         //   icon: Map,
-        //         // },
-        //         // {
-        //         //   title: "Bookings",
-        //         //   href: "/dashboard/bookings",
-        //         //   icon: Calendar,
-        //         // },
-        //         // {
-        //         //   title: "Customers",
-        //         //   href: "/dashboard/customers",
-        //         //   icon: Users,
-        //         // },
+        //         {
+        //             title: "Tours",
+        //             href: "/dashboard/tours",
+        //             icon: Map,
+        //         },
+        //         {
+        //             title: "Bookings",
+        //             href: "/dashboard/bookings",
+        //             icon: Calendar,
+        //         },
+        //         {
+        //             title: "Customers",
+        //             href: "/dashboard/customers",
+        //             icon: Users,
+        //         },
         //     ],
         //     vendor: [
-        //         // {
-        //         //   title: "Products",
-        //         //   href: "/dashboard/products",
-        //         //   icon: ShoppingBag,
-        //         // },
-        //         // {
-        //         //   title: "Orders",
-        //         //   href: "/dashboard/orders",
-        //         //   icon: Package,
-        //         // },
-        //         // {
-        //         //   title: "Customers",
-        //         //   href: "/dashboard/customers",
-        //         //   icon: Users,
-        //         // },
+        //         {
+        //             title: "Products",
+        //             href: "/dashboard/products",
+        //             icon: ShoppingBag,
+        //         },
+        //         {
+        //             title: "Orders",
+        //             href: "/dashboard/orders",
+        //             icon: Package,
+        //         },
+        //         {
+        //             title: "Customers",
+        //             href: "/dashboard/customers",
+        //             icon: Users,
+        //         },
         //     ],
         //     "tour-operator": [
-        //         // {
-        //         //   title: "Tour Packages",
-        //         //   href: "/dashboard/tour-packages",
-        //         //   icon: Package,
-        //         // },
-        //         // {
-        //         //   title: "Bookings",
-        //         //   href: "/dashboard/bookings",
-        //         //   icon: Calendar,
-        //         // },
-        //         // {
-        //         //   title: "Guides",
-        //         //   href: "/dashboard/guides",
-        //         //   icon: Users,
-        //         // },
-        //         // {
-        //         //   title: "Customers",
-        //         //   href: "/dashboard/customers",
-        //         //   icon: Users,
-        //         // },
+        //         {
+        //             title: "Tour Packages",
+        //             href: "/dashboard/tour-packages",
+        //             icon: Package,
+        //         },
+        //         {
+        //             title: "Bookings",
+        //             href: "/dashboard/bookings",
+        //             icon: Calendar,
+        //         },
+        //         {
+        //             title: "Guides",
+        //             href: "/dashboard/guides",
+        //             icon: Users,
+        //         },
+        //         {
+        //             title: "Customers",
+        //             href: "/dashboard/customers",
+        //             icon: Users,
+        //         },
         //     ],
         //     guest: [
         //     ]
@@ -140,16 +186,22 @@ const SidebarComponent = ({ }: Props) => {
             </SidebarHeader>
             <SidebarContent>
                 <SidebarMenu>
-                    {navItems.map((item) => (
-                        <SidebarMenuItem key={item.href}>
-                            <SidebarMenuButton asChild isActive={pathname === item.href} className="flex items-center gap-3">
-                                <Link href={item.href}>
-                                    <item.icon className="h-5 w-5" />
-                                    <span>{item.title}</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    ))}
+                    <div className="px-4 divide-y">
+                        {navItems.map((section, i) =>
+                            <div className="py-2" key={i}>
+                                {section.map(item =>
+                                    <SidebarMenuItem key={item.href}>
+                                        <SidebarMenuButton asChild isActive={pathname === item.href} className="flex items-center gap-3">
+                                            <Link href={item.href}>
+                                                <item.icon className="h-5 w-5" />
+                                                <span>{item.title}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </SidebarMenu>
             </SidebarContent>
             <SidebarFooter className="border-t border-gray-200 p-4">

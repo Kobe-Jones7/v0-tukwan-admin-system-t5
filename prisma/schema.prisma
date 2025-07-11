@@ -44,6 +44,7 @@ model User {
 model Attractions {
   id                    String              @id @default(auto()) @map("_id") @db.ObjectId
   name                  String
+  slug                  String              @unique
   region                String
   category              String
   overview              String
@@ -67,6 +68,7 @@ type VisitingInformation {
 model Marketplace {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   name           String
+  slug           String   @unique
   category       String
   price          Float
   quantity       Int
@@ -92,6 +94,7 @@ model Vendor {
 model TourPackages {
   id                  String          @id @default(auto()) @map("_id") @db.ObjectId
   name                String
+  slug                String          @unique
   region              String
   duration            Int
   group_size          Int

@@ -1,7 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { routes } from "./routes";
 
 const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
+const isPrivateRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
 	const url = req.nextUrl;
@@ -19,15 +21,28 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 	const userId = (await auth()).userId;
 
 	if (isAdminSubdomain) {
-		// If not signed in AND not already on sign-in page, redirect to sign-in
-		if (!userId && !url.pathname.startsWith("/sign-in")) {
+		// If not signed in, redirect to sign-in
+		if (!userId) {
 			const rewrittenUrl = url.clone();
 			rewrittenUrl.pathname = "/sign-in";
-			return NextResponse.rewrite(rewrittenUrl);
+			return NextResponse.rewrite(new URL(rewrittenUrl, req.url));
 		}
 	}
 
-	if (!isPublicRoute(req)) await auth.protect();
+	// prevent dashboard access from site
+	// NOTE: dashboard only accessible from admin subdomain
+	if (!isAdminSubdomain && url.pathname.startsWith(routes.dashboard.index)) {
+		// redirect to home
+		return NextResponse.redirect(new URL(routes.home, req.url));
+	}
+
+	// prevent site pages from loading with admin subdomain
+	if (isAdminSubdomain && !url.pathname.startsWith(routes.dashboard.index)) {
+		// redirect to dashboard
+		return NextResponse.redirect(new URL(routes.dashboard.index, req.url));
+	}
+
+	if (isPrivateRoute(req)) await auth.protect();
 });
 
 export const config = {

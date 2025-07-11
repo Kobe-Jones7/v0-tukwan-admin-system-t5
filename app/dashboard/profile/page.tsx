@@ -448,9 +448,8 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Verification Status</span>
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      formData.isVerified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
-                    }`}
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${formData.isVerified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                      }`}
                   >
                     {formData.isVerified ? "Verified" : "Pending"}
                   </span>
@@ -458,9 +457,8 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <span className="font-medium">Account Status</span>
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      formData.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                    }`}
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${formData.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                      }`}
                   >
                     {formData.isActive ? "Active" : "Inactive"}
                   </span>
