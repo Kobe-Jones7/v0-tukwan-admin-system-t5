@@ -29,7 +29,7 @@ const CustomModal = ({
     const { isOpen, setClose } = useModal();
     return (
         <Dialog open={isOpen || defaultOpen} onOpenChange={setClose}>
-            <DialogContent className={clsx("md:max-h-[700px]", className)}>
+            <DialogContent className={clsx("md:max-h-[calc(100dvh-3rem)]", className)}>
                 <DialogHeader className="text-left">
                     <DialogTitle className="text-xl text-center font-bold">
                         {title}

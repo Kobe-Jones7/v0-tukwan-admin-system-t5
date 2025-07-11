@@ -9,8 +9,8 @@ datasource db {
 }
 
 // ENUMS
-
-enum ItineraryType {
+enum ItineraryTimelineType {
+  road
   tour
   time
   food
@@ -22,7 +22,6 @@ enum UserStatus {
 }
 
 // MODELS
-
 model User {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   avatar     String
@@ -66,7 +65,6 @@ type VisitingInformation {
 }
 
 // Marketplace models
-
 model Marketplace {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   name           String
@@ -92,7 +90,6 @@ model Vendor {
 }
 
 // Tour Packages
-
 model TourPackages {
   id                  String          @id @default(auto()) @map("_id") @db.ObjectId
   name                String
@@ -101,7 +98,7 @@ model TourPackages {
   duration            Int
   group_size          Int
   description         String
-  maximum_age         Int
+  minimum_age         Int
   best_time           String
   tour_highlights     String[]
   what_to_bring       String[]
@@ -109,21 +106,26 @@ model TourPackages {
   images              String[]
   whats_included      String[]
   whats_not_included  String[]
-  cancellation_policy String
+  cancellation_policy String?
   itinerary           ItineraryItem[]
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 }
 
 type ItineraryItem {
-  time           String
-  title          String
-  description    String
-  type           ItineraryType
-  categories     String[]
-  images         String[]
   accommodation  String
+  categories     String[]
+  description    String
+  images         String[]
   included_meals String[]
+  name           String
+  timeline       ItineraryTimeline[]
   travel_tips    String[]
-  tourPackageId  String        @db.ObjectId
+}
+
+type ItineraryTimeline {
+  description String
+  time        String
+  title       String
+  type        ItineraryTimelineType
 }

@@ -16,8 +16,9 @@ export const routes = {
 			details: "/dashboard/marketplace/:slug",
 		},
 		packages: {
-			index: "/dashboard/packages",
-			details: "/dashboard/packages/:slug",
+			index: "/dashboard/tour-packages",
+			new: "/dashboard/tour-packages/new",
+			details: "/dashboard/tour-packages/:slug",
 		},
 	},
 };
