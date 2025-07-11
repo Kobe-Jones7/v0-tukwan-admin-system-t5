@@ -11,24 +11,23 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 		searchParams.length > 0 ? `?${searchParams}` : ""
 	}`;
 	const hostname = req.headers.get("host") || "";
-
 	// Check if subdomain is 'admin'
 	const subdomain = hostname.split(".")[0];
 	const isAdminSubdomain = subdomain === "admin";
 
-	// Authenticated user ID
-	const userId = (await auth()).userId;
-	console.log(userId);
+	// // Authenticated user ID
+	// const userId = (await auth()).userId;
+	// console.log(userId);
 
-	if (isAdminSubdomain) {
-		// If not signed in, redirect to sign-in
-		if (!userId) {
-			console.log("not signed in. redirect to sign in page");
-			const rewrittenUrl = url.clone();
-			rewrittenUrl.pathname = "/sign-in";
-			return NextResponse.rewrite(new URL(rewrittenUrl, req.url));
-		}
-	}
+	// if (isAdminSubdomain) {
+	// 	// If not signed in, redirect to sign-in
+	// 	if (!userId) {
+	// 		console.log("not signed in. redirect to sign in page");
+	// 		const rewrittenUrl = url.clone();
+	// 		rewrittenUrl.pathname = "/sign-in";
+	// 		return NextResponse.rewrite(new URL(rewrittenUrl, req.url));
+	// 	}
+	// }
 
 	// prevent dashboard access from site
 	// NOTE: dashboard only accessible from admin subdomain

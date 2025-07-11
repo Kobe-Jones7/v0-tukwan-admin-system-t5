@@ -9,7 +9,7 @@ export const routes = {
 		attractions: {
 			index: "/dashboard/attractions",
 			new: "/dashboard/attractions/new",
-			details: "/dashboard/attractions/:slug",
+			update: "/dashboard/attractions/:slug",
 		},
 		marketplace: {
 			index: "/dashboard/marketplace",

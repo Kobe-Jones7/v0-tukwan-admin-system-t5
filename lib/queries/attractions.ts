@@ -10,7 +10,7 @@ import { db } from "@/lib/db";
  * Create or update attraction based on slug
  */
 export async function upsertAttraction(
-	data: Omit<Attractions, "id" | "createdAt" | "updatedAt">
+	data: Omit<Attractions, "createdAt" | "updatedAt">
 ): Promise<
 	| { success: true; attraction: Attractions }
 	| { success: false; error: string }
@@ -23,6 +23,7 @@ export async function upsertAttraction(
 		};
 
 	try {
+		console.log("Upserting attraction with data:", data);
 		const attraction = await db.attractions.upsert({
 			where: { slug: data.slug },
 			update: { ...data },
@@ -43,11 +44,18 @@ export async function upsertAttraction(
  * Get all attractions
  */
 export async function getAllAttractions() {
+	const user = await currentUser();
+	if (!user)
+		return {
+			success: false,
+			error: "Failed to validate user",
+		};
+
 	try {
 		const attractions = await db.attractions.findMany({
 			orderBy: { createdAt: "desc" },
 		});
-		return { success: true, attractions };
+		return { success: true, data: attractions };
 	} catch (error) {
 		console.error("Error fetching attractions:", error);
 		return { success: false, error: "Error fetching attractions:" };
@@ -58,11 +66,18 @@ export async function getAllAttractions() {
  * Get a single attraction by slug
  */
 export async function getSingleAttraction(slug: string) {
+	const user = await currentUser();
+	if (!user)
+		return {
+			success: false,
+			error: "Failed to validate user",
+		};
+
 	try {
 		const attraction = await db.attractions.findUnique({
 			where: { slug },
 		});
-		return attraction;
+		return { success: true, data: attraction };
 	} catch (error) {
 		console.error("Error fetching attraction by slug:", error);
 		return { success: false, error: "Error fetching attraction by slug:" };
@@ -73,6 +88,13 @@ export async function getSingleAttraction(slug: string) {
  * Delete an attraction by slug
  */
 export async function deleteAttraction(slug: string) {
+	const user = await currentUser();
+	if (!user)
+		return {
+			success: false,
+			error: "Failed to validate user",
+		};
+
 	try {
 		await db.attractions.delete({ where: { slug } });
 		return { success: true };

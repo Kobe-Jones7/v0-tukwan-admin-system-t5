@@ -24,6 +24,9 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         cssLayerName: 'clerk',
+        elements: {
+          footer: "hidden",
+        },
       }}
     >
       <html lang="en">
