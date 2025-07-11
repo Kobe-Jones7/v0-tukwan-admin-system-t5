@@ -30,13 +30,15 @@ enum UserStatus {
 // MODELS
 
 model User {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String     @unique
-  phone     String
-  status    UserStatus
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  avatar     String
+  email      String     @unique
+  first_name String
+  last_name  String
+  phone      String
+  status     UserStatus
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model Attractions {
