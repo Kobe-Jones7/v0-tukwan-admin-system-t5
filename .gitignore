@@ -25,3 +25,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/app/generated/prisma
+
+yarn.lock
+# pnpm
+.pnpm-lock.yaml
+# clerk configuration (can include secrets)
+/.clerk/

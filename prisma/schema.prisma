@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+
+enum ItineraryType {
+  tour
+  time
+  food
+}
+
+enum UserStatus {
+  active
+  inactive
+}
+
+// MODELS
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String     @unique
+  phone     String
+  status    UserStatus
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Attractions {
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  region                String
+  category              String
+  overview              String
+  history               String
+  cultural_significance String
+  images                String[]
+  location              String
+  visitingInformation   VisitingInformation
+  visitingInformationId String?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+}
+
+type VisitingInformation {
+  opening_hours String
+  entry_fee     String
+}
+
+// Marketplace models
+
+model Marketplace {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  category       String
+  price          Float
+  quantity       Int
+  images         String[]
+  features       String[]
+  specifications Json
+  description    String
+  about_product  String
+  vendor         Vendor?  @relation(fields: [vendorId], references: [id])
+  vendorId       String   @db.ObjectId
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Vendor {
+  id       String        @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  products Marketplace[]
+}
+
+// Tour Packages
+
+model TourPackages {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  region              String
+  duration            Int
+  group_size          Int
+  description         String
+  maximum_age         Int
+  best_time           String
+  tour_highlights     String[]
+  what_to_bring       String[]
+  price               Float
+  images              String[]
+  whats_included      String[]
+  whats_not_included  String[]
+  cancellation_policy String
+  itinerary           ItineraryItem[]
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model ItineraryItem {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  time           String
+  title          String
+  description    String
+  type           ItineraryType
+  categories     String[]
+  images         String[]
+  accommodation  String
+  included_meals String[]
+  travel_tips    String[]
+  tourPackage    TourPackages  @relation(fields: [tourPackageId], references: [id])
+  tourPackageId  String        @db.ObjectId
+}

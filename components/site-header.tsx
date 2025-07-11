@@ -41,11 +41,6 @@ export function SiteHeader() {
               </Button>
             </Link>
 
-            {/* Sign In Button */}
-            <Link href="/sign-in">
-              <Button className="bg-blue-600 hover:bg-blue-700">Sign In</Button>
-            </Link>
-
             {/* Mobile Menu Toggle */}
             <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
