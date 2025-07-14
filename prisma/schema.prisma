@@ -1,3 +1,5 @@
+// schema.prisma
+
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
@@ -9,6 +11,7 @@ datasource db {
 }
 
 // ENUMS
+
 enum ItineraryTimelineType {
   road
   tour
@@ -21,7 +24,73 @@ enum UserStatus {
   inactive
 }
 
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum BookingItemType {
+  ATTRACTION
+  PACKAGE
+}
+
+enum PaymentProvider {
+  PAYSTACK
+  STRIPE
+  PAYPAL
+}
+
+enum PaymentStatus {
+  PROCESSING
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+// TYPES
+
+type Location {
+  address      String
+  country      String
+  country_code String
+  city         String
+  longitude    Float
+  latitude     Float
+  region       String
+}
+
+type VisitingInformation {
+  opening_hours String
+  entry_fee     String
+}
+
+type ItineraryTimeline {
+  description String
+  time        String
+  title       String
+  type        ItineraryTimelineType
+}
+
+type ItineraryItem {
+  accommodation  String
+  categories     String[]
+  description    String
+  images         String[]
+  included_meals String[]
+  name           String
+  timeline       ItineraryTimeline[]
+  travel_tips    String[]
+}
+
+type BookingItem {
+  id   String          @db.ObjectId
+  type BookingItemType
+}
+
 // MODELS
+
 model User {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   avatar     String
@@ -32,16 +101,6 @@ model User {
   status     UserStatus
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-}
-
-type Location {
-  address      String
-  country      String
-  country_code String
-  city         String
-  longitude    Float
-  latitude     Float
-  region       String
 }
 
 model Attractions {
@@ -59,12 +118,6 @@ model Attractions {
   updatedAt             DateTime            @updatedAt
 }
 
-type VisitingInformation {
-  opening_hours String
-  entry_fee     String
-}
-
-// Marketplace models
 model Marketplace {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   name           String
@@ -89,43 +142,51 @@ model Vendor {
   products Marketplace[]
 }
 
-// Tour Packages
 model TourPackages {
-  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
-  name                String
-  slug                String          @unique
-  region              String
-  duration            Int
-  group_size          Int
-  description         String
-  minimum_age         Int
-  best_time           String
-  tour_highlights     String[]
-  what_to_bring       String[]
-  price               Float
-  images              String[]
-  whats_included      String[]
-  whats_not_included  String[]
-  cancellation_policy String?
-  itinerary           ItineraryItem[]
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  slug               String          @unique
+  region             String
+  duration           Int
+  group_size         Int
+  description        String
+  minimum_age        Int
+  best_time          String
+  tour_highlights    String[]
+  what_to_bring      String[]
+  price              Float
+  images             String[]
+  whats_included     String[]
+  whats_not_included String[]
+  // cancellation_policy String?
+  itinerary          ItineraryItem[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
 }
 
-type ItineraryItem {
-  accommodation  String
-  categories     String[]
-  description    String
-  images         String[]
-  included_meals String[]
-  name           String
-  timeline       ItineraryTimeline[]
-  travel_tips    String[]
+model Booking {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  items          BookingItem[]
+  customer_name  String
+  customer_email String
+  customer_phone String
+  tour_date      DateTime
+  amount         Float
+  status         BookingStatus @default(pending)
+  payment        Payment?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
-type ItineraryTimeline {
-  description String
-  time        String
-  title       String
-  type        ItineraryTimelineType
+model Payment {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  provider     PaymentProvider @default(PAYSTACK)
+  checkout_url String
+  access_code  String
+  reference    String
+  status       PaymentStatus   @default(PROCESSING)
+  order_id     String?         @unique @db.ObjectId
+  order        Booking?        @relation(fields: [order_id], references: [id])
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 }

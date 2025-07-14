@@ -56,7 +56,7 @@ const TourPackageForm = ({ data }: Props) => {
         price: z.number().min(1),
         whats_included: z.array(z.string()),
         whats_not_included: z.array(z.string()),
-        cancellation_policy: z.string().nullable(),
+        // cancellation_policy: z.string().nullable(),
         itinerary: z.array(itineraryItemSchema),
     })
 
@@ -77,7 +77,7 @@ const TourPackageForm = ({ data }: Props) => {
             images: [],
             whats_included: [],
             whats_not_included: [],
-            cancellation_policy: "",
+            // cancellation_policy: "",
             itinerary: [],
             ...data,
         },
@@ -332,7 +332,7 @@ const TourPackageForm = ({ data }: Props) => {
                             </CardContent>
                         </Card>
 
-                        <Card>
+                        {/* <Card>
                             <CardHeader>
                                 <CardTitle>Policies</CardTitle>
                             </CardHeader>
@@ -353,7 +353,7 @@ const TourPackageForm = ({ data }: Props) => {
                                     )}
                                 />
                             </CardContent>
-                        </Card>
+                        </Card> */}
                     </div>
 
                     <div className="space-y-6">
