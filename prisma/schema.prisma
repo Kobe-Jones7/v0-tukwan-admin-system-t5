@@ -36,6 +36,13 @@ enum BookingItemType {
   PACKAGE
 }
 
+enum PurchaseStatus {
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
+
 enum PaymentProvider {
   PAYSTACK
   STRIPE
@@ -43,10 +50,10 @@ enum PaymentProvider {
 }
 
 enum PaymentStatus {
-  PROCESSING
-  PENDING
-  COMPLETED
   FAILED
+  PAID
+  PENDING
+  PROCESSING
 }
 
 // TYPES
@@ -178,15 +185,34 @@ model Booking {
   updatedAt      DateTime      @updatedAt
 }
 
+/// New model for marketplace purchases
+model MarketplacePurchase {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  itemIds        String[]       @db.ObjectId
+  customer_name  String
+  customer_email String
+  customer_phone String
+  purchase_date  DateTime       @default(now())
+  amount         Float
+  status         PurchaseStatus @default(CONFIRMED)
+  payment        Payment?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
 model Payment {
-  id           String          @id @default(auto()) @map("_id") @db.ObjectId
-  provider     PaymentProvider @default(PAYSTACK)
+  id           String               @id @default(auto()) @map("_id") @db.ObjectId
+  provider     PaymentProvider      @default(PAYSTACK)
   checkout_url String
   access_code  String
   reference    String
-  status       PaymentStatus   @default(PROCESSING)
-  order_id     String?         @unique @db.ObjectId
-  order        Booking?        @relation(fields: [order_id], references: [id])
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  status       PaymentStatus        @default(PROCESSING)
+  order_id     String?              @unique @db.ObjectId
+  // polymorphic one-to-one:
+  // if this payment is for a booking, relates to Booking.id
+  order        Booking?             @relation(fields: [order_id], references: [id])
+  // if for a marketplace purchase, same order_id links here
+  purchase     MarketplacePurchase? @relation(fields: [order_id], references: [id])
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
 }

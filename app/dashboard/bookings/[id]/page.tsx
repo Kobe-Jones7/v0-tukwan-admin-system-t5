@@ -3,7 +3,7 @@ import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 
 export default function BookingDetailsPage({ params }: { params: { id: string } }) {
   return (
-    <DashboardLayout partnerType="tour-operator">
+    <DashboardLayout>
       <BookingDetails bookingId={params.id} />
     </DashboardLayout>
   )

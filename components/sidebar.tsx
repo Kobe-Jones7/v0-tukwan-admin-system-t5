@@ -24,6 +24,7 @@ import Image from 'next/image'
 import { Button } from './ui/button'
 import { usePathname } from 'next/navigation'
 import { UserButton } from "@clerk/nextjs"
+import { routes } from "@/routes"
 
 type Props = {}
 
@@ -38,7 +39,7 @@ const SidebarComponent = ({ }: Props) => {
             [
                 {
                     title: "Attractions",
-                    href: "/dashboard/attractions",
+                    href: routes.dashboard.attractions.index,
                     icon: Map,
                 },
                 {
@@ -48,12 +49,12 @@ const SidebarComponent = ({ }: Props) => {
                 },
                 {
                     title: "Tour Packages",
-                    href: "/dashboard/tour-packages",
+                    href: routes.dashboard.packages.index,
                     icon: Package,
                 },
                 {
                     title: "Bookings",
-                    href: "/dashboard/bookings",
+                    href: routes.dashboard.bookings.index,
                     icon: Calendar,
                 }
             ],
@@ -62,12 +63,12 @@ const SidebarComponent = ({ }: Props) => {
             [
                 {
                     title: "Dashboard",
-                    href: "/dashboard",
+                    href: routes.dashboard.index,
                     icon: LayoutDashboard,
                 },
                 {
                     title: "Settings",
-                    href: "/dashboard/settings",
+                    href: routes.dashboard.settings,
                     icon: Settings,
                 }
             ]

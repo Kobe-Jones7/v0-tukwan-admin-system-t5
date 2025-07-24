@@ -11,6 +11,10 @@ export const routes = {
 			new: "/dashboard/attractions/new",
 			update: "/dashboard/attractions/:slug",
 		},
+		bookings: {
+			index: "/dashboard/bookings",
+			details: "/dashboard/bookings/:slug",
+		},
 		marketplace: {
 			index: "/dashboard/marketplace",
 			details: "/dashboard/marketplace/:slug",
@@ -20,5 +24,6 @@ export const routes = {
 			new: "/dashboard/tour-packages/new",
 			details: "/dashboard/tour-packages/:slug",
 		},
+		settings: "/dashboard/settings",
 	},
 };
