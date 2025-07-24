@@ -9,10 +9,12 @@ import { TourPackages } from "@/app/generated/prisma"
 import { getTourPackageBySlug } from "@/lib/queries/tour-packages"
 
 type Props = {
-    params: { slug: string }
+    params: Promise<{ slug: string }>
 }
 
-export default async function NewTourPackagePage({ params: { slug } }: Props) {
+export default async function NewTourPackagePage({ params }: Props) {
+
+    const { slug } = await params
 
     const { error, data } = await getTourPackageBySlug(slug)
 

@@ -12,10 +12,7 @@ import { db } from "@/lib/db";
 export async function upsertAttraction(
 	data: Omit<Attractions, "id" | "createdAt" | "updatedAt">,
 	id?: string
-): Promise<
-	| { success: true; attraction: Attractions }
-	| { success: false; error: string }
-> {
+) {
 	const user = await currentUser();
 	if (!user)
 		return {
@@ -38,7 +35,7 @@ export async function upsertAttraction(
 			create: { ...data },
 		});
 
-		return { success: true, attraction };
+		return { success: true, data: attraction };
 	} catch (error) {
 		console.error("Error in upsertAttraction:", error);
 		return {

@@ -28,7 +28,7 @@ const AttractionDetails = async ({ params }: Props) => {
                         </Button>
                         <div>
                             <h1 className="text-2xl font-bold text-neutral-400">
-                                Attractions/<span className='text-black capitalize'>{attraction.name}</span>
+                                Attractions / <span className='text-black capitalize'>{attraction.name}</span>
                             </h1>
                         </div>
                     </div>

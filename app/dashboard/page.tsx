@@ -21,18 +21,18 @@ import {
   Edit,
 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
-import { useAuth } from "@/contexts/auth-context"
 import { apiClient } from "@/lib/api-client"
 import { useToast } from "@/hooks/use-toast"
 
 import React from 'react'
+import { useUser } from "@clerk/nextjs"
 
 type Props = {}
 
 const DashboardPage = (props: Props) => {
 
 
-  const { user } = useAuth()
+  const { user } = useUser()
   const { toast } = useToast()
   const [partnerType, setPartnerType] = useState<"tour-guide" | "vendor" | "tour-operator">("tour-guide")
   const [dashboardData, setDashboardData] = useState<any>(null)
@@ -41,15 +41,15 @@ const DashboardPage = (props: Props) => {
 
   useEffect(() => {
     if (user) {
-      // Set partner type based on user type
-      if (user.role === "tour_guide") setPartnerType("tour-guide")
-      else if (user.role === "vendor") setPartnerType("vendor")
-      else if (user.role === "tour_operator") setPartnerType("tour-operator")
+      // // Set partner type based on user type
+      // if (user.role === "tour_guide") setPartnerType("tour-guide")
+      // else if (user.role === "vendor") setPartnerType("vendor")
+      // else if (user.role === "tour_operator") setPartnerType("tour-operator")
 
-      console.info("User role:", user.role, "Setting partner type to:", partnerType)
-      // Fetch dashboard data
-      // Uncomment the following line when the API is available
-      // fetchDashboardData()
+      // console.info("User role:", user.role, "Setting partner type to:", partnerType)
+      // // Fetch dashboard data
+      // // Uncomment the following line when the API is available
+      // // fetchDashboardData()
     }
     console.warn("User is not defined, skipping dashboard data fetch")
     setLoading(false)
@@ -271,7 +271,7 @@ const DashboardPage = (props: Props) => {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold">Dashboard</h1>
-              <p className="text-gray-500">Welcome back, {user?.name}!</p>
+              <p className="text-gray-500">Welcome back, {user?.firstName}!</p>
             </div>
             <p className="text-gray-500 mt-2">
               Here's an overview of your {partnerType.replace("-", " ")} business performance.
@@ -400,7 +400,7 @@ const DashboardPage = (props: Props) => {
             </CardContent>
           </Card>
 
-          <div className="grid gap-6 md:grid-cols-2 mt-6">
+          <div className="grid gap-6 lg:grid-cols-2 mt-6">
             <Card className="col-span-1">
               <CardHeader>
                 <CardTitle>Revenue Overview</CardTitle>
