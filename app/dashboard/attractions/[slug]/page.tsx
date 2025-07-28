@@ -7,7 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-type Props = { params: { slug: string } }
+type Props = { params: Promise<{ slug: string }> }
 
 const AttractionDetails = async ({ params }: Props) => {
     const { slug } = await params

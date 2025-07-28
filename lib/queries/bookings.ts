@@ -1,36 +1,44 @@
-// app/actions/booking.ts
 "use server";
 
-import { z } from "zod";
-import { db } from "../db";
-import { Booking } from "@/app/generated/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 
-// --- Zod schemas ---
+import {
+	Attractions,
+	Booking,
+	BookingItemType,
+	BookingStatus,
+	Payment,
+	TourPackages,
+} from "@/app/generated/prisma";
+import { db } from "../db";
+import { revalidatePath } from "next/cache";
+import { routes } from "@/routes";
 
-// const bookingItemSchema = z.object({
-// 	id: z.string().min(1),
-// 	type: z.enum(["ATTRACTION", "PACKAGE"]),
-// });
+type BookingItemWithDetails =
+	| {
+			id: string;
+			type: "ATTRACTION";
+			details: Attractions | null;
+	  }
+	| {
+			id: string;
+			type: "PACKAGE";
+			details: TourPackages | null;
+	  };
 
-// const bookingSchema = z.object({
-// 	items: z.array(bookingItemSchema).min(1),
-// 	customer_name: z.string().min(1),
-// 	customer_email: z.string().email(),
-// 	customer_phone: z.string().min(5),
-// 	tour_date: z.preprocess(
-// 		(arg) => (typeof arg === "string" ? new Date(arg) : arg),
-// 		z.instanceof(Date)
-// 	),
-// 	amount: z.number().nonnegative(),
-// 	status: z
-// 		.enum(["pending", "confirmed", "cancelled", "completed"])
-// 		.optional(),
-// });
-
-// type BookingInput = z.infer<typeof bookingSchema>;
-
-// --- Server actions with error handling ---
+export type BookingWithItemDetails = {
+	id: string;
+	customer_name: string;
+	customer_email: string;
+	customer_phone: string;
+	tour_date: Date;
+	amount: number;
+	status: BookingStatus;
+	createdAt: Date;
+	updatedAt: Date;
+	items: BookingItemWithDetails[];
+	payment?: Payment | null;
+};
 
 export async function upsertBooking(
 	data: Omit<Booking, "id" | "createdAt" | "updatedAt">,
@@ -54,20 +62,67 @@ export async function upsertBooking(
 	}
 }
 
-export async function getBookingById(id: string) {
+export async function getBookingById(id: string): Promise<{
+	success: boolean;
+	data?: BookingWithItemDetails;
+	error?: string;
+}> {
 	try {
-		const booking = await db.booking.findUnique({ where: { id } });
+		const booking = await db.booking.findUnique({
+			where: { id },
+			include: { payment: true },
+		});
+
 		if (!booking) {
 			return { success: false, error: "Booking not found" };
 		}
-		return { success: true, data: booking };
+
+		// Fetch details for all items in parallel
+		const itemsWithDetails: BookingItemWithDetails[] = await Promise.all(
+			booking.items.map(async (item) => {
+				if (item.type === "ATTRACTION") {
+					const details = await db.attractions.findUnique({
+						where: { id: item.id },
+					});
+					return {
+						id: item.id,
+						type: "ATTRACTION",
+						details,
+					};
+				} else if (item.type === "PACKAGE") {
+					const details = await db.tourPackages.findUnique({
+						where: { id: item.id },
+					});
+					return {
+						id: item.id,
+						type: "PACKAGE",
+						details,
+					};
+				}
+				// Fallback for unexpected types (should never happen with proper schema)
+				return {
+					id: item.id,
+					type: item.type as "ATTRACTION" | "PACKAGE",
+					details: null,
+				};
+			})
+		);
+		console.log("item details", itemsWithDetails);
+
+		return {
+			success: true,
+			data: { ...booking, items: itemsWithDetails },
+		};
 	} catch (e: any) {
 		console.error("[GET_BOOKING_ERROR]", e);
 		return { success: false, error: "Failed to fetch booking" };
 	}
 }
 
-export async function getAllBookings() {
+export const getAllBookings = async (opts?: {
+	take?: number;
+	skip?: number;
+}) => {
 	const user = await currentUser();
 	if (!user)
 		return {
@@ -77,69 +132,105 @@ export async function getAllBookings() {
 
 	try {
 		const bookings = await db.booking.findMany({
-			orderBy: { createdAt: "desc" },
+			take: opts?.take,
+			skip: opts?.skip,
 			include: {
-				payment: {
-					select: {
-						status: true,
-						reference: true,
-					},
-				},
+				payment: true,
 			},
+			orderBy: { createdAt: "desc" },
 		});
 
-		// Gather all IDs by type
-		const allAttractionIds = bookings.flatMap((b) =>
-			b.items.filter((i) => i.type === "ATTRACTION").map((i) => i.id)
+		const bookings_with_item_details = await Promise.all(
+			bookings.map(async (booking) => {
+				const itemsWithDetails = await Promise.all(
+					booking.items.map(async (item) => {
+						if (item.type === "ATTRACTION") {
+							const details = await db.attractions.findUnique({
+								where: { id: item.id },
+							});
+							return { ...item, details };
+						} else {
+							const details = await db.tourPackages.findUnique({
+								where: { id: item.id },
+							});
+							return { ...item, details };
+						}
+					})
+				);
+
+				return {
+					...booking,
+					items: itemsWithDetails,
+				};
+			})
 		);
-		const allPackageIds = bookings.flatMap((b) =>
-			b.items.filter((i) => i.type === "PACKAGE").map((i) => i.id)
-		);
-
-		// Fetch referenced details in bulk
-		const [attractions, packages] = await Promise.all([
-			db.attractions.findMany({
-				where: { id: { in: allAttractionIds } },
-			}),
-			db.tourPackages.findMany({
-				where: { id: { in: allPackageIds } },
-			}),
-		]);
-		// Helper maps for lookup
-		const attractionMap = new Map(attractions.map((a) => [a.id, a]));
-		const packageMap = new Map(packages.map((p) => [p.id, p]));
-
-		// Add `.details` to each booking item
-		const enrichedBookings = bookings.map((b) => ({
-			...b,
-			items: b.items.map((item) => ({
-				...item,
-				details:
-					item.type === "ATTRACTION"
-						? attractionMap.get(item.id) || null
-						: packageMap.get(item.id) || null,
-			})),
-		}));
-
-		return { success: true, data: enrichedBookings };
+		console.log("[GET_ALL_BOOKINGS]", bookings_with_item_details);
+		return {
+			success: true,
+			data: bookings_with_item_details,
+		};
 	} catch (e: any) {
 		console.error("[GET_ALL_BOOKINGS_ERROR]", e);
 		return { success: false, error: "Failed to fetch bookings" };
 	}
-}
+};
 
-export async function deleteBooking(id: string) {
-	try {
-		await db.booking.delete({ where: { id } });
-		return { success: true };
-	} catch (e: any) {
-		console.error("[DELETE_BOOKING_ERROR]", e);
+export const updateBookingStatus = async (
+	bookingId: string,
+	newStatus: BookingStatus
+) => {
+	const user = await currentUser();
+	if (!user)
 		return {
 			success: false,
-			error:
-				e.code === "P2025"
-					? "Booking not found"
-					: "Failed to delete booking",
+			error: "Failed to validate user",
 		};
+
+	try {
+		// Validate status input
+		const validStatuses = Object.values(BookingStatus);
+		if (!validStatuses.includes(newStatus)) {
+			return {
+				success: false,
+				error: `Invalid status: ${newStatus}`,
+			};
+		}
+
+		// Update booking status
+		const updatedBooking = await db.booking.update({
+			where: { id: bookingId },
+			data: {
+				status: newStatus,
+			},
+		});
+
+		revalidatePath(routes.dashboard.bookings.index, "page");
+		revalidatePath(routes.dashboard.bookings.details, "page");
+
+		return {
+			success: true,
+			data: updatedBooking,
+		};
+	} catch (error: any) {
+		console.error(`Failed to update booking ${bookingId}:`, error);
+
+		console.error("[UPDATE_BOOKING_ERROR]", error);
+		return { success: false, error: "Failed to update booking status" };
 	}
-}
+};
+
+// export async function deleteBooking(id: string) {
+// 	try {
+// 		await db.booking.delete({ where: { id } });
+// 		return { success: true };
+// 	} catch (e: any) {
+// 		console.error("[DELETE_BOOKING_ERROR]", e);
+// 		return {
+// 			success: false,
+// 			error:
+// 				e.code === "P2025"
+// 					? "Booking not found"
+// 					: "Failed to delete booking",
+// 		};
+// 	}
+// }

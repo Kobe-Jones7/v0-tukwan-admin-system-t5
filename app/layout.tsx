@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { MapProvider } from '@/providers/map'
 import ModalProvider from '@/providers/modal'
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: "Tukwan - Discover Africa's Hidden Gems",
@@ -37,6 +38,7 @@ export default function RootLayout({
               {children}
             </MapProvider>
           </ModalProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

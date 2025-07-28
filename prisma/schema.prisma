@@ -53,7 +53,6 @@ enum PaymentStatus {
   FAILED
   PAID
   PENDING
-  PROCESSING
 }
 
 // TYPES
@@ -206,7 +205,7 @@ model Payment {
   checkout_url String
   access_code  String
   reference    String
-  status       PaymentStatus        @default(PROCESSING)
+  status       PaymentStatus        @default(PENDING)
   order_id     String?              @unique @db.ObjectId
   // polymorphic one-to-one:
   // if this payment is for a booking, relates to Booking.id

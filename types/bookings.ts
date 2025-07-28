@@ -1,25 +1,22 @@
 import {
 	Attractions,
 	Booking,
-	BookingStatus,
+	Payment,
 	TourPackages,
 } from "@/app/generated/prisma";
 
-type BaseBookingItem = {
-	id: string;
-	type: Booking["items"][0]["type"];
-};
-
-type EnrichedBookingItem =
-	| (BaseBookingItem & {
+export type BookingItemWithDetails =
+	| {
+			id: string;
 			type: "ATTRACTION";
 			details: Attractions | null;
-	  })
-	| (BaseBookingItem & {
+	  }
+	| {
+			id: string;
 			type: "PACKAGE";
 			details: TourPackages | null;
-	  });
+	  };
 
-export type EnrichedBooking = Omit<Booking, "items"> & {
-	items: EnrichedBookingItem[];
-};
+export type BookingDetails = Booking & {
+	items: BookingItemWithDetails[];
+} & { payment: Payment | null };

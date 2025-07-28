@@ -12,11 +12,11 @@ import { BookingsList } from "./bookings-list"
 import { Input } from "@/components/ui/input"
 import { Table } from "@/components/Table"
 import { routes } from "@/routes"
-import { EnrichedBooking } from "@/types/bookings"
 import { Badge, BadgeProps } from "@/components/ui/badge"
 import clsx from "clsx"
 import { format } from "date-fns"
 import { formatCurrency } from "@/lib/utils"
+import { renderPaymentBadge, renderStatusBadge } from "../badges"
 
 type Props = { bookings?: any[] }
 
@@ -110,7 +110,7 @@ export function BookingsPage({ bookings: data }: Props) {
                   }}
                 >
                   <Table.TD className="whitespace-nowrap font-semibold">
-                    {item.id.slice(0, 7)}
+                    {item.id.slice(-7)}
                   </Table.TD>
                   <Table.TD className="whitespace-nowrap">
                     {item.items.map((_item: any, idx: string) => {
@@ -139,14 +139,13 @@ export function BookingsPage({ bookings: data }: Props) {
                     {formatCurrency(item.amount)}
                   </Table.TD>
                   <Table.TD className="whitespace-nowrap">
-                    <Badge variant={'secondary'} className="lowercase">{item.status}</Badge>
+                    {renderStatusBadge(item.status)}
                   </Table.TD>
                   <Table.TD className="whitespace-nowrap">
-                    <Badge variant={paymentBadgeVariant} className="uppercase">{item.payment?.status ?? 'FAILED'}</Badge>
+                    {renderPaymentBadge(item.payment?.status ?? '')}
                   </Table.TD>
                 </tr>
-              }
-              )}
+              })}
 
               {!data?.length && <Table.Empty title="No bookings found" />}
             </tbody>
