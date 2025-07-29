@@ -5,6 +5,7 @@ import {
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
+  DownloadIcon,
   MapPinIcon,
   SendIcon,
   UserIcon,
@@ -21,12 +22,14 @@ import { Separator } from "@/components/ui/separator"
 import { BookingDetails } from "@/types/bookings"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { formatCurrency } from "@/lib/utils"
+import { base64ToBlob, formatCurrency } from "@/lib/utils"
 import { routes } from "@/routes"
 import { BookingWithItemDetails, updateBookingStatus } from "@/lib/queries/bookings"
 import Link from "next/link"
 import { toast } from "sonner"
 import { renderPaymentBadge, renderStatusBadge } from "../badges"
+import InvoiceGenerator from "@/components/invoices/invoice-generator_bak"
+import { generatePdfAction } from "@/lib/queries/invoices"
 
 interface BookingDetailsProps {
   data: BookingWithItemDetails
@@ -36,6 +39,7 @@ export function BookingsDetail({ data }: BookingDetailsProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("details")
   const [updatingStatus, setUpdatingStatus] = useState<'confirmed' | 'cancelled' | 'completed' | null>(null)
+  const [isDownloading, setIsDownloading] = useState(false);
 
 
   const confirmBooking = async () => {
@@ -86,6 +90,29 @@ export function BookingsDetail({ data }: BookingDetailsProps) {
     setActiveTab("details")
   }
 
+  const handleDownloadPdf = async () => {
+    setIsDownloading(true);
+    try {
+      const base64Pdf = await generatePdfAction(data, format(new Date(), "do MM, yyyy HH:mm a"));
+      const blob = base64ToBlob(base64Pdf, 'application/pdf');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tripify-invoice-${data.id.slice(-7)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // Clean up
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch (error) {
+      console.error('PDF download failed:', error);
+      alert('Failed to download PDF. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -95,20 +122,22 @@ export function BookingsDetail({ data }: BookingDetailsProps) {
           </Button>
         </div>
         <h1 className="text-2xl font-bold tracking-tight">Booking #{data.id?.slice(-7)}</h1>
-        {/* <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+        <div className="flex items-center gap-2">
+          {/* <Button variant="outline" size="sm">
             <PrinterIcon className="mr-2 h-4 w-4" />
             Print
-          </Button>
-          <Button variant="outline" size="sm">
+          </Button> */}
+          {/* <Button variant="outline" size="sm">
             <SendIcon className="mr-2 h-4 w-4" />
             Email
-          </Button>
-          <Button variant="outline" size="sm">
+          </Button> */}
+          <Button variant="outline" size="sm" onClick={handleDownloadPdf} disabled={isDownloading}>
             <DownloadIcon className="mr-2 h-4 w-4" />
             Download
           </Button>
-        </div> */}
+
+          {/* <InvoiceGenerator booking={data} /> */}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -178,7 +207,7 @@ export function BookingsDetail({ data }: BookingDetailsProps) {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm font-medium">Attraction/Package</span>
-                  {/* <span>{data.items?.[0]?.details?.name}</span> */}
+                  <span>{data.items[0].details?.name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm font-medium">Booking Date</span>
