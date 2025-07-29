@@ -58,22 +58,20 @@ export default function AttractionPage({ params }: AttractionPageProps) {
           <div className="container px-4 md:px-6 pb-8">
             <div className="max-w-3xl text-white">
               <div className="flex items-center gap-2 mb-4">
-                <Badge className="bg-blue-600">{attraction.region} Region</Badge>
-                {attraction.tags.slice(0, 2).map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-white border-white">
-                    {tag}
-                  </Badge>
-                ))}
+                <Badge className="bg-blue-600">{attraction.location.region} Region </Badge>
+                <Badge variant="outline" className="text-white border-white">
+                  {attraction.category}
+                </Badge>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold mb-4">{attraction.name}</h1>
               <div className="flex flex-wrap items-center gap-6 text-lg">
                 <div className="flex items-center">
                   <MapPin className="h-5 w-5 mr-2" />
-                  {attraction.region} Region, Ghana
+                  {attraction.location.region}
                 </div>
                 <div className="flex items-center">
                   <Clock className="h-5 w-5 mr-2" />
-                  {attraction.practicalInfo.openingHours}
+                  {attraction.visitingInformation.opening_hours}
                 </div>
               </div>
             </div>
@@ -100,17 +98,17 @@ export default function AttractionPage({ params }: AttractionPageProps) {
                       <CardTitle>About {attraction.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-gray-700 leading-relaxed mb-6">{attraction.description}</p>
+                      <p className="text-gray-700 leading-relaxed mb-6">{attraction.overview}</p>
 
                       <div className="space-y-4">
                         <h4 className="font-semibold">Highlights</h4>
                         <div className="grid md:grid-cols-2 gap-3">
-                          {attraction.highlights.map((highlight, index) => (
+                          {/* {attraction.highlights.map((highlight, index) => (
                             <div key={index} className="flex items-start gap-2">
                               <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
                               <span className="text-gray-700">{highlight}</span>
                             </div>
-                          ))}
+                          ))} */}
                         </div>
                       </div>
                     </CardContent>
@@ -164,19 +162,11 @@ export default function AttractionPage({ params }: AttractionPageProps) {
                         <div className="grid md:grid-cols-2 gap-6">
                           <div>
                             <h4 className="font-semibold mb-2">Visiting Hours</h4>
-                            <p className="text-gray-700">{attraction.practicalInfo.openingHours}</p>
+                            <p className="text-gray-700">{attraction.visitingInformation.opening_hours}</p>
                           </div>
                           <div>
                             <h4 className="font-semibold mb-2">Entry Fee</h4>
-                            <p className="text-gray-700">{attraction.practicalInfo.entryFee}</p>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold mb-2">Accessibility</h4>
-                            <p className="text-gray-700">{attraction.practicalInfo.accessibility}</p>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold mb-2">Best Time to Visit</h4>
-                            <p className="text-gray-700">{attraction.practicalInfo.bestTimeToVisit}</p>
+                            <p className="text-gray-700">{attraction.visitingInformation.entry_fee}</p>
                           </div>
                         </div>
                       </div>
@@ -220,10 +210,10 @@ export default function AttractionPage({ params }: AttractionPageProps) {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm">{attraction.region} Region, Ghana</span>
+                        <span className="text-sm">{attraction.location.region}</span>
                       </div>
                       <div className="text-sm text-gray-500">
-                        Coordinates: {attraction.coordinates.lat}, {attraction.coordinates.lng}
+                        Coordinates: {attraction.location.latitude}, {attraction.location.longitude}
                       </div>
                     </div>
                   </CardContent>
@@ -236,11 +226,9 @@ export default function AttractionPage({ params }: AttractionPageProps) {
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
-                      {attraction.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary">
-                          {tag}
-                        </Badge>
-                      ))}
+                      <Badge variant="secondary">
+                        {attraction.category}
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>

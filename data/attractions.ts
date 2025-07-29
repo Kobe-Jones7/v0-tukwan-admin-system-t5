@@ -1,8 +1,9 @@
 import { Attractions } from "@/app/generated/prisma";
 
-const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
+const attractions = [
 	// Greater Accra Region Attractions
 	{
+		id: "1",
 		slug: "independence-arch",
 		name: "Independence Arch",
 		category: "Historical",
@@ -31,6 +32,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "2",
 		slug: "kwame-nkrumah-museum",
 		name: "Kwame Nkrumah Memorial Park & Museum",
 		category: "Historical",
@@ -59,6 +61,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "3",
 		slug: "christiansborg-castle",
 		name: "Christiansborg Castle (Osu Castle)",
 		category: "Historical",
@@ -88,6 +91,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "4",
 		slug: "national-museum",
 		name: "Ghana National Museum",
 		category: "Museum",
@@ -116,6 +120,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "5",
 		slug: "makola-market",
 		name: "Makola Market",
 		category: "Market",
@@ -145,6 +150,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "6",
 		slug: "accra-arts-center",
 		name: "Accra Arts Centre",
 		category: "Arts",
@@ -174,6 +180,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "7",
 		slug: "oxford-street",
 		name: "Oxford Street (Osu)",
 		category: "Shopping",
@@ -203,6 +210,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "8",
 		slug: "shai-hills",
 		name: "Shai Hills Resource Reserve",
 		category: "Nature",
@@ -229,6 +237,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "9",
 		slug: "tsenku-waterfalls",
 		name: "Tsenku Waterfalls",
 		category: "Nature",
@@ -257,6 +266,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "10",
 		slug: "accra-beaches",
 		name: "Accra Beaches",
 		category: "Beach",
@@ -287,6 +297,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "11",
 		slug: "tema-harbour",
 		name: "Tema Harbour & Greenwich Meridian",
 		category: "Infrastructure",
@@ -317,6 +328,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "12",
 		slug: "fort-prampram",
 		name: "Fort Vernon (Prampram)",
 		category: "Historical",
@@ -348,6 +360,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 
 	// Central Region Attractions
 	{
+		id: "13",
 		slug: "cape-coast-castle",
 		name: "Cape Coast Castle",
 		category: "Historical",
@@ -376,6 +389,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "14",
 		slug: "elmina-castle",
 		name: "Elmina Castle (St. George's Castle)",
 		category: "Historical",
@@ -404,6 +418,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "15",
 		slug: "fort-williams",
 		name: "Fort William (Anomabu)",
 		category: "Historical",
@@ -432,6 +447,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "16",
 		slug: "fort-st-jago",
 		name: "Fort St. Jago (Fort Conraadsburg)",
 		category: "Historical",
@@ -460,6 +476,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "17",
 		slug: "kakum-national-park",
 		name: "Kakum National Park",
 		category: "Nature",
@@ -490,6 +507,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "18",
 		slug: "assin-manso-slave-river",
 		name: "Assin Manso Slave River",
 		category: "Historical",
@@ -520,6 +538,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 
 	// Eastern Region Attractions
 	{
+		id: "19",
 		slug: "aburi-botanical-gardens",
 		name: "Aburi Botanical Gardens",
 		category: "Nature",
@@ -548,6 +567,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "20",
 		slug: "boti-falls",
 		name: "Boti Falls",
 		category: "Waterfall",
@@ -578,6 +598,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 
 	// Volta Region Attractions
 	{
+		id: "21",
 		slug: "wli-waterfalls",
 		name: "Wli Waterfalls",
 		category: "Waterfall",
@@ -606,6 +627,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "22",
 		slug: "mount-afajato",
 		name: "Mount Afajato",
 		category: "Mountain",
@@ -635,6 +657,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "23",
 		slug: "lake-volta",
 		name: "Lake Volta",
 		category: "Lake",
@@ -666,6 +689,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 
 	// Ashanti Region Attractions
 	{
+		id: "24",
 		slug: "manhyia-palace",
 		name: "Manhyia Palace Museum",
 		category: "Historical",
@@ -695,6 +719,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "25",
 		slug: "kumasi-cultural-center",
 		name: "Kumasi Cultural Centre",
 		category: "Cultural",
@@ -726,6 +751,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 
 	// Northern Region Attractions
 	{
+		id: "26",
 		slug: "mole-national-park",
 		name: "Mole National Park",
 		category: "Wildlife",
@@ -754,6 +780,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "27",
 		slug: "larabanga-mosque",
 		name: "Larabanga Mosque",
 		category: "Religious",
@@ -785,6 +812,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 
 	// Western Region Attractions
 	{
+		id: "28",
 		slug: "nzulezo-stilt-village",
 		name: "Nzulezo Stilt Village",
 		category: "Cultural",
@@ -815,6 +843,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 		},
 	},
 	{
+		id: "29",
 		slug: "ankasa-national-park",
 		name: "Ankasa National Park",
 		category: "Rainforest",
@@ -845,6 +874,7 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 
 	// Upper East Region Attractions
 	{
+		id: "30",
 		slug: "paga-crocodile-pond",
 		name: "Paga Crocodile Ponds",
 		category: "Wildlife",
@@ -874,54 +904,55 @@ const attractions: Omit<Attractions, "id" | "createdAt" | "updatedAt">[] = [
 	},
 ];
 
-// // Helper functions
-// export function getAllAttractions() {
-// 	return attractions;
-// }
+// Helper functions
+export function getAllAttractions() {
+	return attractions;
+}
 
-// export function getAttractionById(id: string) {
-// 	return attractions.find((attraction) => attraction.id === id);
-// }
+export function getAttractionById(id: string) {
+	return attractions.find((attraction) => attraction.id === id);
+}
 
-// export function getAttractionsByIds(ids: string[]) {
-// 	return attractions.filter((attraction) => ids.includes(attraction.id));
-// }
+export function getAttractionsByIds(ids: string[]) {
+	return attractions.filter((attraction) => ids.includes(attraction.id));
+}
 
-// export function getAttractionsByRegion(region: string) {
-// 	return attractions.filter(
-// 		(attraction) => attraction.region.toLowerCase() === region.toLowerCase()
-// 	);
-// }
+export function getAttractionsByRegion(region: string) {
+	return attractions.filter(
+		(attraction) =>
+			attraction.location.region.toLowerCase() === region.toLowerCase()
+	);
+}
 
-// export function searchAttractions(query: string) {
-// 	if (!query) return [];
+export function searchAttractions(query: string) {
+	if (!query) return [];
 
-// 	const normalizedQuery = query.toLowerCase();
+	const normalizedQuery = query.toLowerCase();
 
-// 	return attractions.filter((attraction) => {
-// 		return (
-// 			attraction.name.toLowerCase().includes(normalizedQuery) ||
-// 			attraction.description.toLowerCase().includes(normalizedQuery) ||
-// 			attraction.region.toLowerCase().includes(normalizedQuery) ||
-// 			attraction.tags.some((tag) =>
-// 				tag.toLowerCase().includes(normalizedQuery)
-// 			)
-// 		);
-// 	});
-// }
+	return attractions.filter((attraction) => {
+		return (
+			attraction.name.toLowerCase().includes(normalizedQuery) ||
+			attraction.overview.toLowerCase().includes(normalizedQuery) ||
+			attraction.location.region
+				.toLowerCase()
+				.includes(normalizedQuery) ||
+			attraction.category.toLowerCase().includes(normalizedQuery)
+		);
+	});
+}
 
-// export function getAllCategories() {
-// 	const categories = new Set<string>();
-// 	attractions.forEach((attraction) => {
-// 		attraction.tags.forEach((tag) => categories.add(tag));
-// 	});
-// 	return Array.from(categories).sort();
-// }
+export function getAllCategories() {
+	const categories = new Set<string>();
+	attractions.forEach((attraction) => {
+		categories.add(attraction.category);
+	});
+	return Array.from(categories).sort();
+}
 
-// export function getAllRegions() {
-// 	const regions = new Set<string>();
-// 	attractions.forEach((attraction) => {
-// 		regions.add(attraction.region);
-// 	});
-// 	return Array.from(regions).sort();
-// }
+export function getAllRegions() {
+	const regions = new Set<string>();
+	attractions.forEach((attraction) => {
+		regions.add(attraction.location.region);
+	});
+	return Array.from(regions).sort();
+}
