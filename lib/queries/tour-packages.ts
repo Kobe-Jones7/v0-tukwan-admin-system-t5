@@ -12,14 +12,14 @@ export const upsertTourPackage = async (
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
 		const tourPackage = await db.tourPackages.upsert({
 			where: { slug: data.slug },
 			update: { ...data },
-			create: { ...data },
+			create: { ...data }
 		});
 
 		return { success: true, data: tourPackage };
@@ -27,7 +27,7 @@ export const upsertTourPackage = async (
 		console.error("Error in upsertTourPackage:", error);
 		return {
 			success: false,
-			error: "Failed to create or update tour package",
+			error: "Failed to create or update tour package"
 		};
 	}
 };
@@ -37,12 +37,12 @@ export const getTourPackageBySlug = async (slug: string) => {
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
 		const tourPackage = await db.tourPackages.findUnique({
-			where: { slug },
+			where: { slug }
 		});
 
 		if (!tourPackage) {
@@ -60,12 +60,12 @@ export const getAllTourPackages = async () => {
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
 		const tourPackages = await db.tourPackages.findMany({
-			orderBy: { createdAt: "desc" },
+			orderBy: { createdAt: "desc" }
 		});
 
 		if (tourPackages.length === 0) {
@@ -84,12 +84,12 @@ export const deleteTourPackageBySlug = async (slug: string) => {
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
 		const tourPackage = await db.tourPackages.delete({
-			where: { slug },
+			where: { slug }
 		});
 		if (!tourPackage) {
 			return { success: false, error: "Tour package not found" };

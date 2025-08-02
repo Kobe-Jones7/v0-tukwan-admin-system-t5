@@ -93,7 +93,7 @@ export function BookingsDetail({ data }: BookingDetailsProps) {
   const handleDownloadPdf = async () => {
     setIsDownloading(true);
     try {
-      const base64Pdf = await generatePdfAction(data, format(new Date(), "do MM, yyyy HH:mm a"));
+      const base64Pdf = await generatePdfAction(data, format(new Date(), "do MMM, yyyy h:mm a"));
       const blob = base64ToBlob(base64Pdf, 'application/pdf');
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');

@@ -109,7 +109,7 @@ export const translatePaystackStatus = async (
 		case "pending":
 		case "processing":
 		case "queued":
-			newStatus = "PROCESSING";
+			newStatus = "PENDING";
 			break;
 		case "success":
 			newStatus = "PAID";

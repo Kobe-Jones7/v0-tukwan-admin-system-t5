@@ -45,13 +45,13 @@ const columns: ColumnDef<Attractions>[] = [
             return <div className="capitalize text-center">{visiting_info.entry_fee}</div>
         },
     },
-    {
-        accessorKey: "booking",
-        header: () => <div className="text-center">Bookings</div>,
-        cell: ({ row }) => {
-            return <div className="capitalize text-center">0</div>
-        },
-    },
+    // {
+    //     accessorKey: "booking",
+    //     header: () => <div className="text-center">Bookings</div>,
+    //     cell: ({ row }) => {
+    //         return <div className="capitalize text-center">0</div>
+    //     },
+    // },
     {
         accessorKey: "rating",
         header: () => <div className="text-center">Rating</div>,
@@ -141,10 +141,10 @@ export function AttractionsTable({ attractions: data }: Props) {
                     Previous
                 </Button>
 
-                <div className="text-muted-foreground text-sm">
+                {/* <div className="text-muted-foreground text-sm">
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
                     {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
+                </div> */}
 
                 <Button
                     variant="outline"

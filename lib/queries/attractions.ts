@@ -17,7 +17,7 @@ export async function upsertAttraction(
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
@@ -32,7 +32,7 @@ export async function upsertAttraction(
 		const attraction = await db.attractions.upsert({
 			where: query_where,
 			update: { ...data },
-			create: { ...data },
+			create: { ...data }
 		});
 
 		return { success: true, data: attraction };
@@ -40,7 +40,7 @@ export async function upsertAttraction(
 		console.error("Error in upsertAttraction:", error);
 		return {
 			success: false,
-			error: "Failed to create or update attraction",
+			error: "Failed to create or update attraction"
 		};
 	}
 }
@@ -53,12 +53,12 @@ export async function getAllAttractions() {
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
 		const attractions = await db.attractions.findMany({
-			orderBy: { createdAt: "desc" },
+			orderBy: { createdAt: "desc" }
 		});
 		return { success: true, data: attractions };
 	} catch (error) {
@@ -75,12 +75,12 @@ export async function getSingleAttraction(slug: string) {
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
 		const attraction = await db.attractions.findUnique({
-			where: { slug },
+			where: { slug }
 		});
 		return { success: true, data: attraction };
 	} catch (error) {
@@ -97,7 +97,7 @@ export async function deleteAttraction(slug: string) {
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
