@@ -6,24 +6,25 @@ export const routes = {
 	vooya: "/vooya-wallet/",
 	dashboard: {
 		index: "/dashboard",
+		overview: "/dashboard/overview",
 		attractions: {
 			index: "/dashboard/attractions",
 			new: "/dashboard/attractions/new",
-			update: "/dashboard/attractions/:slug",
+			update: "/dashboard/attractions/:slug"
 		},
 		bookings: {
 			index: "/dashboard/bookings",
-			details: "/dashboard/bookings/:slug",
+			details: "/dashboard/bookings/:slug"
 		},
 		marketplace: {
 			index: "/dashboard/marketplace",
-			details: "/dashboard/marketplace/:slug",
+			details: "/dashboard/marketplace/:slug"
 		},
 		packages: {
 			index: "/dashboard/tour-packages",
 			new: "/dashboard/tour-packages/new",
-			details: "/dashboard/tour-packages/:slug",
+			details: "/dashboard/tour-packages/:slug"
 		},
-		settings: "/dashboard/settings",
-	},
+		settings: "/dashboard/settings"
+	}
 };

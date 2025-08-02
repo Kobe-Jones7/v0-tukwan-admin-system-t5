@@ -37,9 +37,27 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 	}
 
 	// prevent site pages from loading with admin subdomain
-	if (isAdminSubdomain && !url.pathname.startsWith(routes.dashboard.index)) {
-		// redirect to dashboard
-		return NextResponse.redirect(new URL(routes.dashboard.index, req.url));
+	if (isAdminSubdomain) {
+		// Redirect dashboard index route to overview
+		if (url.pathname === routes.dashboard.index) {
+			return NextResponse.redirect(
+				new URL(routes.dashboard.overview, req.url)
+			);
+		}
+
+		// Redirect any non-dashboard paths to overview
+		if (!url.pathname.startsWith(routes.dashboard.index)) {
+			return NextResponse.redirect(
+				new URL(routes.dashboard.overview, req.url)
+			);
+		}
+	}
+
+	if (url.pathname === routes.dashboard.index) {
+		// redirect to dashboard overview
+		return NextResponse.redirect(
+			new URL(routes.dashboard.overview, req.url)
+		);
 	}
 
 	if (isPrivateRoute(req)) await auth.protect();
@@ -50,6 +68,6 @@ export const config = {
 		// Skip Next.js internals and all static files, unless found in search params
 		"/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
 		// Always run for API routes
-		"/(api|trpc)(.*)",
-	],
+		"/(api|trpc)(.*)"
+	]
 };

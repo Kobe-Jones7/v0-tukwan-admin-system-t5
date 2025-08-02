@@ -63,7 +63,7 @@ const SidebarComponent = ({ }: Props) => {
             [
                 {
                     title: "Dashboard",
-                    href: routes.dashboard.index,
+                    href: routes.dashboard.overview,
                     icon: LayoutDashboard,
                 },
                 {
