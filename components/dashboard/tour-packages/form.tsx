@@ -22,7 +22,7 @@ import FileUpload from '@/components/file-upload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useModal } from '@/providers/modal'
-import InputModal from "./input-modal"
+import InputModal from "../input-modal"
 import { routes } from '@/routes'
 
 type Props = { data?: TourPackages }

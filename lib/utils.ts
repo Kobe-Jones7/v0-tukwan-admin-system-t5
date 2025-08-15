@@ -11,7 +11,7 @@ export const formatCurrency = (
 ) => {
 	return new Intl.NumberFormat(locale, {
 		style: "currency",
-		currency: "GHS",
+		currency: "GHS"
 	}).format(amount);
 };
 
@@ -23,4 +23,9 @@ export function base64ToBlob(base64: string, contentType: string = "") {
 	}
 	const byteArray = new Uint8Array(byteNumbers);
 	return new Blob([byteArray], { type: contentType });
+}
+
+export function arrayToJson(arr: any[]) {
+	const obj = { [arr[0]]: arr[1] };
+	return obj;
 }

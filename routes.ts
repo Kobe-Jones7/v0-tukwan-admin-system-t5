@@ -18,6 +18,7 @@ export const routes = {
 		},
 		marketplace: {
 			index: "/dashboard/marketplace",
+			new: "/dashboard/marketplace/new",
 			details: "/dashboard/marketplace/:slug"
 		},
 		packages: {

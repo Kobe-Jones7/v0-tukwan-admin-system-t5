@@ -18,6 +18,7 @@ import {
     Calendar,
     Users,
     Package,
+    Store,
 } from "lucide-react"
 import Link from 'next/link'
 import Image from 'next/image'
@@ -66,6 +67,15 @@ const SidebarComponent = ({ }: Props) => {
                     href: routes.dashboard.overview,
                     icon: LayoutDashboard,
                 },
+            ],
+            [
+                {
+                    title: "MarketPlace",
+                    href: routes.dashboard.marketplace.index,
+                    icon: Store,
+                },
+            ],
+            [
                 {
                     title: "Settings",
                     href: routes.dashboard.settings,
@@ -170,7 +180,7 @@ const SidebarComponent = ({ }: Props) => {
             </SidebarContent>
             <SidebarFooter className="border-t border-gray-200 p-4">
                 <div className="flex flex-col gap-2">
-                    <Button variant="outline" className="justify-start gap-2" asChild>
+                    <Button variant="ghost" className="justify-start gap-2" asChild>
                         <Link href="/dashboard/help">
                             <HelpCircle className="h-5 w-5" />
                             Help & Support

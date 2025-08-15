@@ -1,9 +1,10 @@
 "use server";
 
 import { renderToBuffer } from "@react-pdf/renderer";
+
 import PdfInvoiceTemplate from "@/components/invoices/pdf-invoice-template";
-// import { sendEmailWithPdf } from "@/lib/email";
 import { BookingWithItemDetails } from "./bookings";
+// import { sendEmailWithPdf } from "@/lib/email";
 
 export const generatePdfAction = async (
 	booking: BookingWithItemDetails,

@@ -1,6 +1,7 @@
-import { currentUser } from "@clerk/nextjs/server";
-import { db } from "../db";
+"use server";
+
 import { PaymentProvider, PaymentStatus } from "@/app/generated/prisma";
+import { db } from "../db";
 
 type paymentBody = {
 	provider: PaymentProvider;
@@ -14,7 +15,7 @@ type paymentBody = {
 export async function createPayment(paymentBody: paymentBody) {
 	try {
 		const payment = await db.payment.create({
-			data: paymentBody,
+			data: paymentBody
 		});
 
 		return { success: true, data: payment };

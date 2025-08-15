@@ -3,7 +3,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 
 import { Attractions, User } from "@/app/generated/prisma";
-
 import { db } from "@/lib/db";
 
 /**

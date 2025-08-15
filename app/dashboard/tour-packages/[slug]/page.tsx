@@ -7,6 +7,8 @@ import TourPackageForm from "@/components/dashboard/tour-packages/form"
 import { Button } from "@/components/ui/button"
 import { TourPackages } from "@/app/generated/prisma"
 import { getTourPackageBySlug } from "@/lib/queries/tour-packages"
+import BackButton from "@/components/dashboard/back-button"
+import { routes } from "@/routes"
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -21,11 +23,7 @@ export default async function NewTourPackagePage({ params }: Props) {
     return (
         <DashboardLayout>
             <div className="flex items-center gap-2 mb-8">
-                <Button variant="outline" size="icon" asChild>
-                    <Link href="/dashboard/tour-packages">
-                        <ArrowLeft className="h-4 w-4" />
-                    </Link>
-                </Button>
+                <BackButton link={routes.dashboard.packages.index} />
                 <div>
                     <h1 className="text-2xl font-bold">Add New Tour Package</h1>
                     <p className="text-gray-500 mt-1">Create a comprehensive tour package for your customers</p>

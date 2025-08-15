@@ -4,17 +4,18 @@ import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, getSorte
 import * as React from "react"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Attractions } from "@/app/generated/prisma"
+import { Attractions, Booking, Marketplace, Vendor } from "@/app/generated/prisma"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { routes } from "@/routes"
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 
 type Props = {
-    attractions: Attractions[]
+    items: Marketplace[]
 }
 
-const columns: ColumnDef<Attractions>[] = [
-
+const columns: ColumnDef<Marketplace>[] = [
     {
         accessorKey: "name",
         header: "Name",
@@ -23,35 +24,49 @@ const columns: ColumnDef<Attractions>[] = [
         ),
     },
     {
-        accessorKey: "location",
-        header: "Location",
-        cell: ({ row }) => {
-            const location = row.getValue("location") as Attractions['location']
-            return <div className="capitalize">
-                {location.address.split(',').pop()},{location.region}
-            </div>;
-        },
+        accessorKey: "category",
+        header: "Category",
+        cell: ({ row }) => (
+            <Badge variant="default" className="lowercase w-fit">{row.getValue("category")}</Badge>
+        ),
     },
     {
-        accessorKey: "visitingInformation",
-        header: () => <div className="text-center">Entry Fee</div>,
-        cell: ({ row }) => {
-            const visiting_info = row.getValue("visitingInformation") as Attractions['visitingInformation']
-            return <div className="capitalize text-center">{visiting_info.entry_fee}</div>
-        },
+        accessorKey: "price",
+        header: "Price",
+        cell: ({ row }) => (
+            <div className="capitalize">{formatCurrency(row.getValue("price"))}</div>
+        ),
     },
     {
-        accessorKey: "rating",
-        header: () => <div className="text-center">Rating</div>,
+        accessorKey: "quantity",
+        header: "Quantity",
+        cell: ({ row }) => (
+            <div className="capitalize">{row.getValue("quantity")}</div>
+        ),
+    },
+    {
+        accessorKey: "items_sold",
+        header: "Sales",
+        cell: ({ row }) => (
+            <div className="capitalize">{row.getValue("items_sold")}</div>
+        ),
+    },
+    {
+        accessorKey: "vendor",
+        header: "vendor",
         cell: ({ row }) => {
-            return <div className="capitalize text-center">N/A</div>
-        },
+            const vendor = row.getValue('vendor') as Vendor
+            return <div className="capitalize" > {vendor.name}</div>
+        }
+        ,
     },
 ]
 
-export function AttractionsTable({ attractions: data }: Props) {
+export function MarketplaceTable({ items: data }: Props) {
     const router = useRouter()
     const [sorting, setSorting] = React.useState<SortingState>([])
+
+    console.log("marketplace items;", data)
 
     const table = useReactTable({
         data,
@@ -92,7 +107,7 @@ export function AttractionsTable({ attractions: data }: Props) {
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                     className="cursor-pointer"
-                                    onClick={() => { router.push(routes.dashboard.attractions.update.replace(":slug", row.original.slug)) }}
+                                    onClick={() => { router.push(routes.dashboard.marketplace.details.replace(":slug", row.original.slug)) }}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

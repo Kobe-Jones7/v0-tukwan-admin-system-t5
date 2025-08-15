@@ -1,6 +1,7 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 import {
 	Attractions,
@@ -8,11 +9,10 @@ import {
 	BookingItemType,
 	BookingStatus,
 	Payment,
-	TourPackages,
+	TourPackages
 } from "@/app/generated/prisma";
-import { db } from "../db";
-import { revalidatePath } from "next/cache";
 import { routes } from "@/routes";
+import { db } from "../db";
 
 type BookingItemWithDetails =
 	| {
@@ -53,7 +53,7 @@ export async function upsertBooking(
 		const booking = await db.booking.upsert({
 			where: { id },
 			update: { ...data },
-			create: { ...data },
+			create: { ...data }
 		});
 		return { success: true, data: booking };
 	} catch (e: any) {
@@ -70,7 +70,7 @@ export async function getBookingById(id: string): Promise<{
 	try {
 		const booking = await db.booking.findUnique({
 			where: { id },
-			include: { payment: true },
+			include: { payment: true }
 		});
 
 		if (!booking) {
@@ -82,28 +82,28 @@ export async function getBookingById(id: string): Promise<{
 			booking.items.map(async (item) => {
 				if (item.type === "ATTRACTION") {
 					const details = await db.attractions.findUnique({
-						where: { id: item.id },
+						where: { id: item.id }
 					});
 					return {
 						id: item.id,
 						type: "ATTRACTION",
-						details,
+						details
 					};
 				} else if (item.type === "PACKAGE") {
 					const details = await db.tourPackages.findUnique({
-						where: { id: item.id },
+						where: { id: item.id }
 					});
 					return {
 						id: item.id,
 						type: "PACKAGE",
-						details,
+						details
 					};
 				}
 				// Fallback for unexpected types (should never happen with proper schema)
 				return {
 					id: item.id,
 					type: item.type as "ATTRACTION" | "PACKAGE",
-					details: null,
+					details: null
 				};
 			})
 		);
@@ -111,7 +111,7 @@ export async function getBookingById(id: string): Promise<{
 
 		return {
 			success: true,
-			data: { ...booking, items: itemsWithDetails },
+			data: { ...booking, items: itemsWithDetails }
 		};
 	} catch (e: any) {
 		console.error("[GET_BOOKING_ERROR]", e);
@@ -127,7 +127,7 @@ export const getAllBookings = async (opts?: {
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
@@ -135,9 +135,9 @@ export const getAllBookings = async (opts?: {
 			take: opts?.take,
 			skip: opts?.skip,
 			include: {
-				payment: true,
+				payment: true
 			},
-			orderBy: { createdAt: "desc" },
+			orderBy: { createdAt: "desc" }
 		});
 
 		const bookings_with_item_details = await Promise.all(
@@ -146,12 +146,12 @@ export const getAllBookings = async (opts?: {
 					booking.items.map(async (item) => {
 						if (item.type === "ATTRACTION") {
 							const details = await db.attractions.findUnique({
-								where: { id: item.id },
+								where: { id: item.id }
 							});
 							return { ...item, details };
 						} else {
 							const details = await db.tourPackages.findUnique({
-								where: { id: item.id },
+								where: { id: item.id }
 							});
 							return { ...item, details };
 						}
@@ -160,14 +160,14 @@ export const getAllBookings = async (opts?: {
 
 				return {
 					...booking,
-					items: itemsWithDetails,
+					items: itemsWithDetails
 				};
 			})
 		);
 		console.log("[GET_ALL_BOOKINGS]", bookings_with_item_details);
 		return {
 			success: true,
-			data: bookings_with_item_details,
+			data: bookings_with_item_details
 		};
 	} catch (e: any) {
 		console.error("[GET_ALL_BOOKINGS_ERROR]", e);
@@ -183,7 +183,7 @@ export const updateBookingStatus = async (
 	if (!user)
 		return {
 			success: false,
-			error: "Failed to validate user",
+			error: "Failed to validate user"
 		};
 
 	try {
@@ -192,7 +192,7 @@ export const updateBookingStatus = async (
 		if (!validStatuses.includes(newStatus)) {
 			return {
 				success: false,
-				error: `Invalid status: ${newStatus}`,
+				error: `Invalid status: ${newStatus}`
 			};
 		}
 
@@ -200,8 +200,8 @@ export const updateBookingStatus = async (
 		const updatedBooking = await db.booking.update({
 			where: { id: bookingId },
 			data: {
-				status: newStatus,
-			},
+				status: newStatus
+			}
 		});
 
 		revalidatePath(routes.dashboard.bookings.index, "page");
@@ -209,7 +209,7 @@ export const updateBookingStatus = async (
 
 		return {
 			success: true,
-			data: updatedBooking,
+			data: updatedBooking
 		};
 	} catch (error: any) {
 		console.error(`Failed to update booking ${bookingId}:`, error);

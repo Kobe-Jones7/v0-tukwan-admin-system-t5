@@ -30,6 +30,7 @@ import { toast } from "sonner"
 import { renderPaymentBadge, renderStatusBadge } from "../badges"
 import InvoiceGenerator from "@/components/invoices/invoice-generator_bak"
 import { generatePdfAction } from "@/lib/queries/invoices"
+import BackButton from "../back-button"
 
 interface BookingDetailsProps {
   data: BookingWithItemDetails
@@ -117,9 +118,7 @@ export function BookingsDetail({ data }: BookingDetailsProps) {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => { router.push(routes.dashboard.bookings.index) }}>
-            <ArrowLeftIcon className="h-4 w-4" />
-          </Button>
+          <BackButton link={routes.dashboard.bookings.index} />
         </div>
         <h1 className="text-2xl font-bold tracking-tight">Booking #{data.id?.slice(-7)}</h1>
         <div className="flex items-center gap-2">

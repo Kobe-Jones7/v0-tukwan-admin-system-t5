@@ -1,4 +1,5 @@
 import AttractionForm from '@/components/dashboard/attractions/form'
+import BackButton from "@/components/dashboard/back-button"
 import { DashboardLayout } from '@/components/dashboard/dashboard-layout'
 import { Button } from '@/components/ui/button'
 import { getSingleAttraction } from '@/lib/queries/attractions'
@@ -21,11 +22,7 @@ const AttractionDetails = async ({ params }: Props) => {
             {attraction &&
                 <>
                     <div className="flex items-center gap-2 mb-8">
-                        <Button variant="outline" size="icon" asChild>
-                            <Link href={routes.dashboard.attractions.index}>
-                                <ArrowLeft className="h-4 w-4" />
-                            </Link>
-                        </Button>
+                        <BackButton link={routes.dashboard.attractions.index} />
                         <div>
                             <h1 className="text-2xl font-bold text-neutral-400">
                                 Attractions / <span className='text-black capitalize'>{attraction.name}</span>
